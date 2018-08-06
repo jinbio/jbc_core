@@ -93,7 +93,7 @@ static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesi
  */
 static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
 {
-    const char* pszTimestamp = "yangchigi.com regist at 7/10/2000 ... WOW!!!";
+    const char* pszTimestamp = "jbcoin is new crypto currency pow+pos . ";
     const CScript genesisOutputScript = CScript() << 
         ParseHex("041f989cea5bb6e240acc9d417c7fcfa11ff771fd8e16481d5c164ffa4fc0968c4732834682d605f05c451d93f61508734b7632530db36e688963921daea7db924") << OP_CHECKSIG;
     return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);
@@ -114,8 +114,8 @@ class CMainParams : public CChainParams {
 public:
     CMainParams() {
         strNetworkID = "main";
-        uint32_t GEN_TIME = 1497484800;
-        unsigned int NOUNCE = 39035;
+        uint32_t GEN_TIME = 1531180800;
+        unsigned int NOUNCE = 243616;
         consensus.BIP34Height = 0;
         consensus.BIP65Height = 0; // bab3041e8977e0dc3eeff63fe707b92bde1dd449d8efafb248c27c8264cc311a
         consensus.BIP66Height = 0; // 7aceee012833fa8952f8835d8b1b3ae233cd6ab08fdb27a771d2bd7bdc491894
@@ -154,13 +154,13 @@ public:
         pchMessageStart[1] = 0x41;//
         pchMessageStart[2] = 0x4e;//
         pchMessageStart[3] = 0x47;//
-        nDefaultPort = 23001;
+        nDefaultPort = 13701;
         nPruneAfterHeight = 100000;
 
         genesis = CreateGenesisBlock(GEN_TIME,NOUNCE, 0x1e0fffff, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        uint256 hashGenesis = uint256S("0xbf36a3266be55cff28ff429bc066ac80fc2d05cb395ecef14dbb72d221395bbe");
-        uint256 hashMerkelRoot = uint256S("0xb27efd689036a672667617d484edcd6be1a5778b7623dd42680d6eade89c2ad7");
+        uint256 hashGenesis = uint256S("0xa5e581552975d1fc9abf64c12cda2ebcaa6fbff2640508654f53f9614cb8103b");
+        uint256 hashMerkelRoot = uint256S("0x9848263056f1ad473e2b599546d201dc3e1a416955aeb76ce194feda27463784");
         if(hashGenesis !=genesis.GetHash()){
             genesis.nNonce = 0;
             searchGenesis(genesis);
@@ -210,8 +210,8 @@ class CTestNetParams : public CChainParams {
 public:
     CTestNetParams() {
         strNetworkID = "test";
-        uint32_t GEN_TIME = 1497484801;
-        unsigned int NOUNCE = 2061590;
+        uint32_t GEN_TIME = 1531180801;
+        unsigned int NOUNCE = 592921;
         consensus.BIP34Height = 0;
         // consensus.BIP34Hash = uint256S("8075c771ed8b495ffd943980a95f702ab34fce3c8c54e379548bda33cc8c0573");
         consensus.BIP65Height = 76; // 8075c771ed8b495ffd943980a95f702ab34fce3c8c54e379548bda33cc8c0573
@@ -247,13 +247,13 @@ public:
         pchMessageStart[1] = 0x61;
         pchMessageStart[2] = 0x6e;
         pchMessageStart[3] = 0x67;
-        nDefaultPort = 23011;
+        nDefaultPort = 13711;
         nPruneAfterHeight = 1000;
 
         genesis = CreateGenesisBlock(GEN_TIME,NOUNCE, 0x1e0fffff, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        uint256 hashGenesis = uint256S("0x096ce3bbe32a7d43e1242feb97f517cd4506ec3eb03126dc6e8c34e6d3b18e20");
-        uint256 hashMerkelRoot = uint256S("0x6b9ff8837771c47b088ac9304d01667a2f976a7e94531b5a77b4ddeb9a6a19fe");
+        uint256 hashGenesis = uint256S("0xfa029c2dc59f2dc5d8e5d15c2aa6dd581033930369a95912d4ed6ceaf30ade57");
+        uint256 hashMerkelRoot = uint256S("0x7d05553c3001a27f4b5a2f369796f73ad8c0ad1862f01e132dd49e87b1ebabf3");
         if(hashGenesis !=genesis.GetHash()){
             genesis.nNonce = 0;
             searchGenesis(genesis);
@@ -264,7 +264,7 @@ public:
         vFixedSeeds.clear();
         vSeeds.clear();
         // nodes with support for servicebits filtering should be at the top
-        vSeeds.push_back(CDNSSeedData("dns001", "yang001.bitchk.com",true));
+        vSeeds.push_back(CDNSSeedData("dns001", "jbc001.bitchk.com",true));
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,80);//Y
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,142);//y
         
@@ -305,8 +305,8 @@ class CRegTestParams : public CChainParams {
 public:
     CRegTestParams() {
         strNetworkID = "regtest";
-        uint32_t GEN_TIME = 1497484802;
-        unsigned int NOUNCE = 164116;
+        uint32_t GEN_TIME = 1531180802;
+        unsigned int NOUNCE = 99974;
         consensus.BIP34Height = 100000000; // BIP34 has not activated on regtest (far in the future so block v1 are not rejected in tests)
         // consensus.BIP34Hash = uint256();
         consensus.BIP65Height = 1351; // BIP65 activated on regtest (Used in rpc activation tests)
@@ -338,13 +338,13 @@ public:
         pchMessageStart[1] = 0x61;
         pchMessageStart[2] = 0x6e;
         pchMessageStart[3] = 0x67;
-        nDefaultPort = 23021;
+        nDefaultPort = 13721;
         nPruneAfterHeight = 1000;
 
         genesis = CreateGenesisBlock(GEN_TIME,NOUNCE, 0x1e0fffff, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        uint256 hashGenesis = uint256S("0xa31f431eceadaa4be8056c888a5e53ff9f88aadb51f337f323a9b6fd3ceb4505");
-        uint256 hashMerkelRoot = uint256S("0x9a95652dd2cbbe103550e625d35cb5bf955c0754596a12afc4b479869d47ac8d");
+        uint256 hashGenesis = uint256S("0xfdb5b475d03679da97d24e6003d377426c7caa0ec18aa231874c531cf81efefd");
+        uint256 hashMerkelRoot = uint256S("0xc229a5d4e701fca2e6385457f1b68979d52356e8901f847fa5f445ad45b6cafe");
         if(hashGenesis !=genesis.GetHash()){
             genesis.nNonce = 0;
             searchGenesis(genesis);
