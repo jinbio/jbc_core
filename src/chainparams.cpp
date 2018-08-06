@@ -150,10 +150,10 @@ public:
          * The characters are rarely used upper ASCII, not valid as UTF-8, and produce
          * a large 32-bit integer with any alignment.
          */
-        pchMessageStart[0] = 0x59;//
-        pchMessageStart[1] = 0x41;//
-        pchMessageStart[2] = 0x4e;//
-        pchMessageStart[3] = 0x47;//
+        pchMessageStart[0] = 0xa4;//
+        pchMessageStart[1] = 0x42;//
+        pchMessageStart[2] = 0x43;//
+        pchMessageStart[3] = 0x43;//
         nDefaultPort = 13701;
         nPruneAfterHeight = 100000;
 
@@ -172,8 +172,8 @@ public:
         // Note that of those with the service bits flag, most only support a subset of possible options
         vSeeds.push_back(CDNSSeedData("seed", "seed-jbc.bitchk.com",true));
         
-        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,78);//Y
-        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,140);//y
+        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,43);//J
+        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,105);//j
         
         base58Prefixes[SECRET_KEY] =     std::vector<unsigned char>(1,204);
         base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x04)(0x88)(0xB2)(0x1E).convert_to_container<std::vector<unsigned char> >();
@@ -243,10 +243,10 @@ public:
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0x00"); //8711
 
-        pchMessageStart[0] = 0x79;
-        pchMessageStart[1] = 0x61;
-        pchMessageStart[2] = 0x6e;
-        pchMessageStart[3] = 0x67;
+        pchMessageStart[0] = 0xa4;//
+        pchMessageStart[1] = 0x42;//
+        pchMessageStart[2] = 0x43;//
+        pchMessageStart[3] = 0x43;//
         nDefaultPort = 13711;
         nPruneAfterHeight = 1000;
 
@@ -265,8 +265,8 @@ public:
         vSeeds.clear();
         // nodes with support for servicebits filtering should be at the top
         vSeeds.push_back(CDNSSeedData("dns001", "jbc001.bitchk.com",true));
-        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,80);//Y
-        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,142);//y
+       base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,105);//J
+        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,43);//j
         
 
         
@@ -334,10 +334,10 @@ public:
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0x00");
 
-        pchMessageStart[0] = 0x79;
-        pchMessageStart[1] = 0x61;
-        pchMessageStart[2] = 0x6e;
-        pchMessageStart[3] = 0x67;
+        pchMessageStart[0] = 0xa4;//
+        pchMessageStart[1] = 0x42;//
+        pchMessageStart[2] = 0x43;//
+        pchMessageStart[3] = 0x43;//
         nDefaultPort = 13721;
         nPruneAfterHeight = 1000;
 
