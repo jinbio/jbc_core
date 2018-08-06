@@ -130,8 +130,8 @@
         <translation>Kõvakettal olevate plokkide reindekseerimine...</translation>
     </message>
     <message>
-        <source>Yangcoin</source>
-        <translation>Yangcoin</translation>
+        <source>JBCoin</source>
+        <translation>JBCoin</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -760,8 +760,8 @@
         <translation>Valikud:</translation>
     </message>
     <message>
-        <source>Yangcoin Core</source>
-        <translation>Yangcoin Core</translation>
+        <source>JBCoin Core</source>
+        <translation>JBCoin Core</translation>
     </message>
     <message>
         <source>Information</source>

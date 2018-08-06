@@ -16,14 +16,14 @@ BEGIN
     BEGIN
         BLOCK "040904E4" // U.S. English - multilingual (hex)
         BEGIN
-            VALUE "CompanyName",        "Yangcoin"
-            VALUE "FileDescription",    "yangcoind (Yangcoin node with a JSON-RPC server)"
+            VALUE "CompanyName",        "JBCoin"
+            VALUE "FileDescription",    "jbcoind (JBCoin node with a JSON-RPC server)"
             VALUE "FileVersion",        VER_FILEVERSION_STR
-            VALUE "InternalName",       "yangcoind"
+            VALUE "InternalName",       "jbcoind"
             VALUE "LegalCopyright",     COPYRIGHT_STR
             VALUE "LegalTrademarks1",   "Distributed under the MIT software license, see the accompanying file COPYING or http://www.opensource.org/licenses/mit-license.php."
-            VALUE "OriginalFilename",   "yangcoind.exe"
-            VALUE "ProductName",        "yangcoind"
+            VALUE "OriginalFilename",   "jbcoind.exe"
+            VALUE "ProductName",        "jbcoind"
             VALUE "ProductVersion",     VER_PRODUCTVERSION_STR
         END
     END

@@ -130,8 +130,8 @@
         <translation>Reindexando bloques no disco...</translation>
     </message>
     <message>
-        <source>Send coins to a Yangcoin address</source>
-        <translation>Enviar moedas a unha dirección Yangcoin</translation>
+        <source>Send coins to a JBCoin address</source>
+        <translation>Enviar moedas a unha dirección JBCoin</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -154,8 +154,8 @@
         <translation>&amp;Verificar mensaxe...</translation>
     </message>
     <message>
-        <source>Yangcoin</source>
-        <translation>Yangcoin</translation>
+        <source>JBCoin</source>
+        <translation>JBCoin</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -182,12 +182,12 @@
         <translation>Encriptar as claves privadas que pertencen ao teu moedeiro</translation>
     </message>
     <message>
-        <source>Sign messages with your Yangcoin addresses to prove you own them</source>
-        <translation>Asina mensaxes coas túas direccións Yangcoin para probar que te pertencen</translation>
+        <source>Sign messages with your JBCoin addresses to prove you own them</source>
+        <translation>Asina mensaxes coas túas direccións JBCoin para probar que te pertencen</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified Yangcoin addresses</source>
-        <translation>Verificar mensaxes para asegurar que foron asinados con direccións Yangcoin dadas.</translation>
+        <source>Verify messages to ensure they were signed with specified JBCoin addresses</source>
+        <translation>Verificar mensaxes para asegurar que foron asinados con direccións JBCoin dadas.</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -206,8 +206,8 @@
         <translation>Barra de ferramentas</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and yangcoin: URIs)</source>
-        <translation>Solicitar pagos (xenera códigos QR e yangcoin: URIs)</translation>
+        <source>Request payments (generates QR codes and jbcoin: URIs)</source>
+        <translation>Solicitar pagos (xenera códigos QR e jbcoin: URIs)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -218,8 +218,8 @@
         <translation>Amosar a listaxe de etiquetas e direccións para recibir empregadas</translation>
     </message>
     <message>
-        <source>Open a yangcoin: URI or payment request</source>
-        <translation>Abrir un yangcoin: URI ou solicitude de pago</translation>
+        <source>Open a jbcoin: URI or payment request</source>
+        <translation>Abrir un jbcoin: URI ou solicitude de pago</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
@@ -466,8 +466,8 @@
         <translation>Moedeiro</translation>
     </message>
     <message>
-        <source>Automatically open the Yangcoin client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Abrir automáticamente o porto do cliente Yangcoin no router. Esto so funciona se o teu router soporta UPnP e está habilitado.</translation>
+        <source>Automatically open the JBCoin client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>Abrir automáticamente o porto do cliente JBCoin no router. Esto so funciona se o teu router soporta UPnP e está habilitado.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
@@ -545,8 +545,8 @@
         <translation>Formulario</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Yangcoin network after a connection is established, but this process has not completed yet.</source>
-        <translation>A información amosada por estar desactualizada. O teu moedeiro sincronízase automáticamente coa rede Yangcoin despois de que se estableza unha conexión, pero este proceso non está todavía rematado.</translation>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the JBCoin network after a connection is established, but this process has not completed yet.</source>
+        <translation>A información amosada por estar desactualizada. O teu moedeiro sincronízase automáticamente coa rede JBCoin despois de que se estableza unha conexión, pero este proceso non está todavía rematado.</translation>
     </message>
     <message>
         <source>Your current spendable balance</source>
@@ -927,8 +927,8 @@
         <translation>Copiar a sinatura actual ao portapapeis do sistema</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this Yangcoin address</source>
-        <translation>Asina a mensaxe para probar que posees esta dirección Yangcoin</translation>
+        <source>Sign the message to prove you own this JBCoin address</source>
+        <translation>Asina a mensaxe para probar que posees esta dirección JBCoin</translation>
     </message>
     <message>
         <source>Sign &amp;Message</source>
@@ -947,8 +947,8 @@
         <translation>&amp;Verificar Mensaxe</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified Yangcoin address</source>
-        <translation>Verificar a mensaxe para asegurar que foi asinada coa dirección Yangcoin especificada</translation>
+        <source>Verify the message to ensure it was signed with the specified JBCoin address</source>
+        <translation>Verificar a mensaxe para asegurar que foi asinada coa dirección JBCoin especificada</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -1028,8 +1028,8 @@
         <translation>Executar no fondo como un demo e aceptar comandos</translation>
     </message>
     <message>
-        <source>Yangcoin Core</source>
-        <translation>Core de Yangcoin</translation>
+        <source>JBCoin Core</source>
+        <translation>Core de JBCoin</translation>
     </message>
     <message>
         <source>Bind to given address and always listen on it. Use [host]:port notation for IPv6</source>

@@ -1,24 +1,24 @@
 #! /bin/sh
 ### BEGIN INIT INFO
-# Provides:		yangcoind
+# Provides:		jbcoind
 # Required-Start:	$syslog $remote_fs
 # Required-Stop:	$syslog $remote_fs
 # Should-Start:		$local_fs
 # Should-Stop:		$local_fs
 # Default-Start:	2 3 4 5
 # Default-Stop:		0 1 6
-# Short-Description:	yangcoind
-# Description:		yangcoind
+# Short-Description:	jbcoind
+# Description:		jbcoind
 ### END INIT INFO
 
-PROG=yangcoind
+PROG=jbcoind
 USER=user
 GROUP=user
-INSTALL_PATH=/home/user/yangcoin/src
+INSTALL_PATH=/home/user/jbcoin/src
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 DAEMON=$INSTALL_PATH/$PROG
-NAME=yangcoind
-DESC=yangcoind
+NAME=jbcoind
+DESC=jbcoind
 
 RUNDIR=/var/run/${PROG}
 PIDFILE=$RUNDIR/${PROG}.pid

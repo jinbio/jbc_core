@@ -1,10 +1,10 @@
 <!--- Remove sections that do not apply -->
 
-This issue tracker is only for technical issues related to yangcoin-core.
+This issue tracker is only for technical issues related to jbcoin-core.
 
-General yangcoin questions and/or support requests and are best directed to the [yangcointalk.io forums](https://yangcointalk.io/).
+General jbcoin questions and/or support requests and are best directed to the [jbcointalk.io forums](https://jbcointalk.io/).
 
-For reporting security issues, please contact the Yangcoin developers on the #yangcoin-dev Freenode IRC channel or alternatively you can email us at contact@yangcoin.org.
+For reporting security issues, please contact the JBCoin developers on the #jbcoin-dev Freenode IRC channel or alternatively you can email us at contact@jbcoin.org.
 
 ### Describe the issue
 
@@ -23,7 +23,7 @@ Tell us what happens instead
 ### Screenshots.
 If the issue is related to the GUI, screenshots can be added to this issue via drag & drop.
 
-### What version of yangcoin-core are you using?
+### What version of jbcoin-core are you using?
 List the version number/commit ID, and if it is an official binary, self compiled or a distribution package such as PPA.
 
 ### Machine specs:

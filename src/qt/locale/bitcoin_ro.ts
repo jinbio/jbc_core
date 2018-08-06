@@ -142,8 +142,8 @@
         <translation>Deschide &amp;URI...</translation>
     </message>
     <message>
-        <source>Send coins to a Yangcoin address</source>
-        <translation>Trimite monedele către o adresă Yangcoin</translation>
+        <source>Send coins to a JBCoin address</source>
+        <translation>Trimite monedele către o adresă JBCoin</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -166,8 +166,8 @@
         <translation>&amp;Verifică mesajul...</translation>
     </message>
     <message>
-        <source>Yangcoin</source>
-        <translation>Yangcoin</translation>
+        <source>JBCoin</source>
+        <translation>JBCoin</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -194,12 +194,12 @@
         <translation>Criptează cheile private care aparțin portofelului tău.</translation>
     </message>
     <message>
-        <source>Sign messages with your Yangcoin addresses to prove you own them</source>
-        <translation>Semnează mesajele cu adresa ta de Yangcoin pentru a face dovada că îți aparțin.</translation>
+        <source>Sign messages with your JBCoin addresses to prove you own them</source>
+        <translation>Semnează mesajele cu adresa ta de JBCoin pentru a face dovada că îți aparțin.</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified Yangcoin addresses</source>
-        <translation>Verifică mesajele cu scopul de a asigura faptul că au fost semnate cu adresa de Yangcoin specificată.</translation>
+        <source>Verify messages to ensure they were signed with specified JBCoin addresses</source>
+        <translation>Verifică mesajele cu scopul de a asigura faptul că au fost semnate cu adresa de JBCoin specificată.</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -214,12 +214,12 @@
         <translation>&amp;Ajutor</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and yangcoin: URIs)</source>
-        <translation>Cerere plată (generează coduri QR și yangcoin: URIs)</translation>
+        <source>Request payments (generates QR codes and jbcoin: URIs)</source>
+        <translation>Cerere plată (generează coduri QR și jbcoin: URIs)</translation>
     </message>
     <message>
-        <source>Open a yangcoin: URI or payment request</source>
-        <translation>Deschide un yangcoin: URI sau cerere de plată</translation>
+        <source>Open a jbcoin: URI or payment request</source>
+        <translation>Deschide un jbcoin: URI sau cerere de plată</translation>
     </message>
     <message>
         <source>%1 behind</source>
@@ -748,8 +748,8 @@
 <context>
     <name>bitcoin-core</name>
     <message>
-        <source>Yangcoin Core</source>
-        <translation>Yangcoin Core</translation>
+        <source>JBCoin Core</source>
+        <translation>JBCoin Core</translation>
     </message>
     <message>
         <source>Information</source>

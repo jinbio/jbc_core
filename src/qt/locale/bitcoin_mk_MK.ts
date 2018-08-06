@@ -138,7 +138,7 @@
         <translation>Повторно индексирање на блокови од дискот...</translation>
     </message>
     <message>
-        <source>Send coins to a Yangcoin address</source>
+        <source>Send coins to a JBCoin address</source>
         <translation>Испрати биткоини на Биткоин адреса</translation>
     </message>
     <message>
@@ -146,7 +146,7 @@
         <translation>&amp;Потврди порака...</translation>
     </message>
     <message>
-        <source>Yangcoin</source>
+        <source>JBCoin</source>
         <translation>Биткоин</translation>
     </message>
     <message>
@@ -578,7 +578,7 @@
         <translation>Опции:</translation>
     </message>
     <message>
-        <source>Yangcoin Core</source>
+        <source>JBCoin Core</source>
         <translation>Биткоин Core</translation>
     </message>
     <message>

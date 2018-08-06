@@ -142,8 +142,8 @@
         <translation>Bloku reindeksēšana no diska...</translation>
     </message>
     <message>
-        <source>Send coins to a Yangcoin address</source>
-        <translation>Nosūtīt bitkoinus uz Yangcoin adresi</translation>
+        <source>Send coins to a JBCoin address</source>
+        <translation>Nosūtīt bitkoinus uz JBCoin adresi</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -166,8 +166,8 @@
         <translation>&amp;Pārbaudīt ziņojumu...</translation>
     </message>
     <message>
-        <source>Yangcoin</source>
-        <translation>Yangcoin</translation>
+        <source>JBCoin</source>
+        <translation>JBCoin</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -194,12 +194,12 @@
         <translation>Šifrēt privātās atslēgas kuras pieder tavam maciņam</translation>
     </message>
     <message>
-        <source>Sign messages with your Yangcoin addresses to prove you own them</source>
-        <translation>Parakstīt ziņojumus ar savām Yangcoin adresēm lai pierādītu ka tās pieder tev</translation>
+        <source>Sign messages with your JBCoin addresses to prove you own them</source>
+        <translation>Parakstīt ziņojumus ar savām JBCoin adresēm lai pierādītu ka tās pieder tev</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified Yangcoin addresses</source>
-        <translation>Pārbaudīt ziņojumus lai pārliecinātos, ka tie tika parakstīti ar norādītajām Yangcoin adresēm</translation>
+        <source>Verify messages to ensure they were signed with specified JBCoin addresses</source>
+        <translation>Pārbaudīt ziņojumus lai pārliecinātos, ka tie tika parakstīti ar norādītajām JBCoin adresēm</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -218,12 +218,12 @@
         <translation>Ciļņu rīkjosla</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and yangcoin: URIs)</source>
-        <translation>Pieprasīt maksājumus (izveido QR kodu un yangcoin: URIs)</translation>
+        <source>Request payments (generates QR codes and jbcoin: URIs)</source>
+        <translation>Pieprasīt maksājumus (izveido QR kodu un jbcoin: URIs)</translation>
     </message>
     <message>
-        <source>Open a yangcoin: URI or payment request</source>
-        <translation>Atvērt yangcoin URI vai maksājuma pieprasījumu</translation>
+        <source>Open a jbcoin: URI or payment request</source>
+        <translation>Atvērt jbcoin URI vai maksājuma pieprasījumu</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
@@ -499,15 +499,15 @@
     </message>
     <message>
         <source>Enable coin &amp;control features</source>
-        <translation>Ieslēgt yangcoin &amp;kontroles funkcijas</translation>
+        <translation>Ieslēgt jbcoin &amp;kontroles funkcijas</translation>
     </message>
     <message>
         <source>&amp;Spend unconfirmed change</source>
         <translation>&amp;Tērēt neapstiprinātu atlikumu</translation>
     </message>
     <message>
-        <source>Automatically open the Yangcoin client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Uz rūtera automātiski atvērt Yangcoin klienta portu. Tas strādā tikai tad, ja rūteris atbalsta UPnP un tas ir ieslēgts.</translation>
+        <source>Automatically open the JBCoin client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>Uz rūtera automātiski atvērt JBCoin klienta portu. Tas strādā tikai tad, ja rūteris atbalsta UPnP un tas ir ieslēgts.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
@@ -559,7 +559,7 @@
     </message>
     <message>
         <source>Whether to show coin control features or not.</source>
-        <translation>Vai rādīt Yangcoin kontroles funkcijas vai nē.</translation>
+        <translation>Vai rādīt JBCoin kontroles funkcijas vai nē.</translation>
     </message>
     <message>
         <source>&amp;OK</source>
@@ -593,8 +593,8 @@
         <translation>Forma</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Yangcoin network after a connection is established, but this process has not completed yet.</source>
-        <translation>Attēlotā informācija var būt novecojusi. Jūsu maciņš pēc savienojuma izveides automātiski sinhronizējas ar Yangcoin tīklu, taču šis process vēl nav beidzies.</translation>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the JBCoin network after a connection is established, but this process has not completed yet.</source>
+        <translation>Attēlotā informācija var būt novecojusi. Jūsu maciņš pēc savienojuma izveides automātiski sinhronizējas ar JBCoin tīklu, taču šis process vēl nav beidzies.</translation>
     </message>
     <message>
         <source>Available:</source>
@@ -852,7 +852,7 @@
     </message>
     <message>
         <source>Coin Control Features</source>
-        <translation>Yangcoin Kontroles Funkcijas</translation>
+        <translation>JBCoin Kontroles Funkcijas</translation>
     </message>
     <message>
         <source>Inputs...</source>
@@ -1027,8 +1027,8 @@
         <translation>Kopēt parakstu uz sistēmas starpliktuvi</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this Yangcoin address</source>
-        <translation>Parakstīt ziņojumu lai pierādītu, ka esi šīs Yangcoin adreses īpašnieks.</translation>
+        <source>Sign the message to prove you own this JBCoin address</source>
+        <translation>Parakstīt ziņojumu lai pierādītu, ka esi šīs JBCoin adreses īpašnieks.</translation>
     </message>
     <message>
         <source>Sign &amp;Message</source>
@@ -1124,8 +1124,8 @@
         <translation>Darbināt fonā kā servisu un pieņemt komandas</translation>
     </message>
     <message>
-        <source>Yangcoin Core</source>
-        <translation>Yangcoin Core</translation>
+        <source>JBCoin Core</source>
+        <translation>JBCoin Core</translation>
     </message>
     <message>
         <source>&lt;category&gt; can be:</source>

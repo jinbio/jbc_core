@@ -29,16 +29,16 @@
   <string>????</string>
 
   <key>CFBundleExecutable</key>
-  <string>Yangcoin-Qt</string>
+  <string>JBCoin-Qt</string>
   
   <key>CFBundleName</key>
-  <string>Yangcoin-Qt</string>
+  <string>JBCoin-Qt</string>
 
   <key>LSHasLocalizedDisplayName</key>
   <true/>
 
   <key>CFBundleIdentifier</key>
-  <string>com.yangcoin.Yangcoin-Qt</string>
+  <string>com.jbcoin.JBCoin-Qt</string>
 
   <key>CFBundleURLTypes</key>
   <array>
@@ -46,10 +46,10 @@
       <key>CFBundleTypeRole</key>
       <string>Editor</string>
       <key>CFBundleURLName</key>
-      <string>com.yangcoin.YangcoinPayment</string>
+      <string>com.jbcoin.JBCoinPayment</string>
       <key>CFBundleURLSchemes</key>
       <array>
-        <string>yangcoin</string>
+        <string>jbcoin</string>
       </array>
     </dict>
   </array>
@@ -58,9 +58,9 @@
   <array>
     <dict>
       <key>UTTypeIdentifier</key>
-      <string>com.yangcoin.paymentrequest</string>
+      <string>com.jbcoin.paymentrequest</string>
       <key>UTTypeDescription</key>
-      <string>Yangcoin payment request</string>
+      <string>JBCoin payment request</string>
       <key>UTTypeConformsTo</key>
       <array>
         <string>public.data</string>
@@ -68,10 +68,10 @@
       <key>UTTypeTagSpecification</key>
       <dict>
         <key>public.mime-type</key>
-        <string>application/x-yangcoin-payment-request</string>
+        <string>application/x-jbcoin-payment-request</string>
         <key>public.filename-extension</key>
         <array>
-          <string>yangcoinpaymentrequest</string>
+          <string>jbcoinpaymentrequest</string>
         </array>
       </dict>
     </dict>
@@ -84,7 +84,7 @@
       <string>Editor</string>
       <key>LSItemContentTypes</key>
       <array>
-        <string>com.yangcoin.paymentrequest</string>
+        <string>com.jbcoin.paymentrequest</string>
       </array>
       <key>LSHandlerRank</key>
       <string>Owner</string>

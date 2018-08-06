@@ -62,12 +62,12 @@
         <translation>Адреси за получаване</translation>
     </message>
     <message>
-        <source>These are your Yangcoin addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
+        <source>These are your JBCoin addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
         <translation>Това са адресите на получателите на плащания. Винаги проверявайте размера на сумата и адреса на получателя, преди да изпратите монети.</translation>
     </message>
     <message>
-        <source>These are your Yangcoin addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
-        <translation>Това са Вашите Yangcoin адреси,благодарение на които ще получавате плащания.Препоръчително е да използвате нови адреси за получаване на всяка транзакция.</translation>
+        <source>These are your JBCoin addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
+        <translation>Това са Вашите JBCoin адреси,благодарение на които ще получавате плащания.Препоръчително е да използвате нови адреси за получаване на всяка транзакция.</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
@@ -168,7 +168,7 @@
         <translation>Потвърдете на шифрирането на портфейла</translation>
     </message>
     <message>
-        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR YANGCOIN&lt;/b&gt;!</source>
+        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR JBCOIN&lt;/b&gt;!</source>
         <translation>ВНИМАНИЕ: Ако шифрирате вашият портфейл и изгубите паролата си, &lt;b&gt;ЩЕ ИЗГУБИТЕ ВСИЧКИТЕ СИ БИТКОИНИ&lt;/b&gt;!</translation>
     </message>
     <message>
@@ -318,7 +318,7 @@
         <translation>Повторно индексиране на блоковете на диска...</translation>
     </message>
     <message>
-        <source>Send coins to a Yangcoin address</source>
+        <source>Send coins to a JBCoin address</source>
         <translation>Изпращане към Биткоин адрес</translation>
     </message>
     <message>
@@ -342,7 +342,7 @@
         <translation>&amp;Проверка на съобщение...</translation>
     </message>
     <message>
-        <source>Yangcoin</source>
+        <source>JBCoin</source>
         <translation>Биткоин</translation>
     </message>
     <message>
@@ -370,12 +370,12 @@
         <translation>Шифроване на личните ключове,които принадлежат на портфейла Ви.</translation>
     </message>
     <message>
-        <source>Sign messages with your Yangcoin addresses to prove you own them</source>
-        <translation>Пишете съобщения със своя Yangcoin адрес за да докажете,че е ваш.</translation>
+        <source>Sign messages with your JBCoin addresses to prove you own them</source>
+        <translation>Пишете съобщения със своя JBCoin адрес за да докажете,че е ваш.</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified Yangcoin addresses</source>
-        <translation>Потвърждаване на съобщения  за да се знае,че са написани с дадените Yangcoin адреси.</translation>
+        <source>Verify messages to ensure they were signed with specified JBCoin addresses</source>
+        <translation>Потвърждаване на съобщения  за да се знае,че са написани с дадените JBCoin адреси.</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -394,8 +394,8 @@
         <translation>Раздели</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and yangcoin: URIs)</source>
-        <translation>Изискване на плащания(генерира QR кодове и Yangcoin: URIs)</translation>
+        <source>Request payments (generates QR codes and jbcoin: URIs)</source>
+        <translation>Изискване на плащания(генерира QR кодове и JBCoin: URIs)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -406,8 +406,8 @@
         <translation>Покажи списък с използваните адреси и имена.</translation>
     </message>
     <message>
-        <source>Open a yangcoin: URI or payment request</source>
-        <translation>Отворете Yangcoin: URI  или заявка за плащане</translation>
+        <source>Open a jbcoin: URI or payment request</source>
+        <translation>Отворете JBCoin: URI  или заявка за плащане</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
@@ -450,8 +450,8 @@
         <translation>Синхронизиран</translation>
     </message>
     <message>
-        <source>Show the %1 help message to get a list with possible Yangcoin command-line options</source>
-        <translation>Покажи %1 помощно съобщение за да получиш лист с възможни Yangcoin команди</translation>
+        <source>Show the %1 help message to get a list with possible JBCoin command-line options</source>
+        <translation>Покажи %1 помощно съобщение за да получиш лист с възможни JBCoin команди</translation>
     </message>
     <message>
         <source>%1 client</source>
@@ -690,7 +690,7 @@
         <translation>Редактиране на адрес за изпращане</translation>
     </message>
     <message>
-        <source>The entered address "%1" is not a valid Yangcoin address.</source>
+        <source>The entered address "%1" is not a valid JBCoin address.</source>
         <translation>"%1" не е валиден Биткоин адрес.</translation>
     </message>
     <message>
@@ -904,16 +904,16 @@
         <translation>&amp;Похарчете непотвърденото ресто</translation>
     </message>
     <message>
-        <source>Automatically open the Yangcoin client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Автоматично отваряне на входящия Yangcoin порт. Работи само с рутери поддържащи UPnP.</translation>
+        <source>Automatically open the JBCoin client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>Автоматично отваряне на входящия JBCoin порт. Работи само с рутери поддържащи UPnP.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
         <translation>Отваряне на входящия порт чрез &amp;UPnP</translation>
     </message>
     <message>
-        <source>Connect to the Yangcoin network through a SOCKS5 proxy.</source>
-        <translation>Свързване с Yangcoin мрежата чрез SOCKS5  прокси.</translation>
+        <source>Connect to the JBCoin network through a SOCKS5 proxy.</source>
+        <translation>Свързване с JBCoin мрежата чрез SOCKS5  прокси.</translation>
     </message>
     <message>
         <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
@@ -1007,7 +1007,7 @@
         <translation>Формуляр</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Yangcoin network after a connection is established, but this process has not completed yet.</source>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the JBCoin network after a connection is established, but this process has not completed yet.</source>
         <translation>Текущата информация на екрана може да не е актуална. Вашият портфейл ще се синхронизира автоматично с мрежата на Биткоин, щом поне една връзката с нея се установи; този процес все още не е приключил.</translation>
     </message>
     <message>
@@ -1062,8 +1062,8 @@
         <translation>Възникна грешка по време назаявката за плащане</translation>
     </message>
     <message>
-        <source>Cannot start yangcoin: click-to-pay handler</source>
-        <translation>Yangcoin не можe да се стартира: click-to-pay handler</translation>
+        <source>Cannot start jbcoin: click-to-pay handler</source>
+        <translation>JBCoin не можe да се стартира: click-to-pay handler</translation>
     </message>
     <message>
         <source>URI handling</source>
@@ -1136,8 +1136,8 @@
         <translation>Сума</translation>
     </message>
     <message>
-        <source>Enter a Yangcoin address (e.g. %1)</source>
-        <translation>Въведете Yangcoin адрес (например: %1)</translation>
+        <source>Enter a JBCoin address (e.g. %1)</source>
+        <translation>Въведете JBCoin адрес (например: %1)</translation>
     </message>
     <message>
         <source>%1 d</source>
@@ -1689,8 +1689,8 @@
         <translation>Заявката за плащане е изтекла.</translation>
     </message>
     <message>
-        <source>Warning: Invalid Yangcoin address</source>
-        <translation>Внимание: Невалиден Yangcoin адрес</translation>
+        <source>Warning: Invalid JBCoin address</source>
+        <translation>Внимание: Невалиден JBCoin адрес</translation>
     </message>
     <message>
         <source>Warning: Unknown change address</source>
@@ -1809,7 +1809,7 @@
         <translation>Копиране на текущия подпис</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this Yangcoin address</source>
+        <source>Sign the message to prove you own this JBCoin address</source>
         <translation>Подпишете съобщение като доказателство, че притежавате определен адрес</translation>
     </message>
     <message>
@@ -1825,7 +1825,7 @@
         <translation>&amp;Провери</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified Yangcoin address</source>
+        <source>Verify the message to ensure it was signed with the specified JBCoin address</source>
         <translation>Проверете съобщение, за да сте сигурни че е подписано с определен Биткоин адрес</translation>
     </message>
     <message>
@@ -2346,8 +2346,8 @@
         <translation>Въведете Ваш публичен адрес</translation>
     </message>
     <message>
-        <source>Yangcoin Core</source>
-        <translation>Yangcoin ядро</translation>
+        <source>JBCoin Core</source>
+        <translation>JBCoin ядро</translation>
     </message>
     <message>
         <source>&lt;category&gt; can be:</source>

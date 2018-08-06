@@ -15,9 +15,9 @@
 USER=etra
 RETVAL=0
 BITCOIND_OPTS=-daemon
-prog=yangcoind
-BITCOIND_PATH=/home/etra/yangcoin
-BITCOIND_BIN=$BITCOIND_PATH/yangcoind
+prog=jbcoind
+BITCOIND_PATH=/home/etra/jbcoin
+BITCOIND_BIN=$BITCOIND_PATH/jbcoind
 # you can override the lockfile via BITCOIND_LOCKFILE in /etc/sysconfig/bitcoind
 lockfile=${BITCOIND_LOCKFILE-/var/lock/subsys/bitcoind}
 

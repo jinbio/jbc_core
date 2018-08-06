@@ -62,12 +62,12 @@
         <translation>Адрес за получаване</translation>
     </message>
     <message>
-        <source>These are your Yangcoin addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>Тези са вашите Yangcoin адреси за изпращане на монети. Винаги проверявайте количеството и получаващия адрес преди изпращане. </translation>
+        <source>These are your JBCoin addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
+        <translation>Тези са вашите JBCoin адреси за изпращане на монети. Винаги проверявайте количеството и получаващия адрес преди изпращане. </translation>
     </message>
     <message>
-        <source>These are your Yangcoin addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
-        <translation>Това са вашите Yangcoin адреси за получаване на монети. Препоръчително е да ползвате нов адрес на всяка транзакция.</translation>
+        <source>These are your JBCoin addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
+        <translation>Това са вашите JBCoin адреси за получаване на монети. Препоръчително е да ползвате нов адрес на всяка транзакция.</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
@@ -420,8 +420,8 @@
 <context>
     <name>bitcoin-core</name>
     <message>
-        <source>Yangcoin Core</source>
-        <translation>Yangcoin ядро</translation>
+        <source>JBCoin Core</source>
+        <translation>JBCoin ядро</translation>
     </message>
     </context>
 </TS>

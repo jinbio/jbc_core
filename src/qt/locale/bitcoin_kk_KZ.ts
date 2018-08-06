@@ -70,7 +70,7 @@
         <translation>Құпия сөзді өзгерту</translation>
     </message>
     <message>
-        <source>Yangcoin</source>
+        <source>JBCoin</source>
         <translation>Биткоин</translation>
     </message>
     <message>

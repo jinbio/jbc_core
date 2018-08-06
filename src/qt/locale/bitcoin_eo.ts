@@ -62,12 +62,12 @@
         <translation>Ricevaj adresoj</translation>
     </message>
     <message>
-        <source>These are your Yangcoin addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>Jen viaj Yangcoin-adresoj por sendi pagojn. Zorge kontrolu la sumon kaj la alsendan adreson antaŭ ol sendi.</translation>
+        <source>These are your JBCoin addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
+        <translation>Jen viaj JBCoin-adresoj por sendi pagojn. Zorge kontrolu la sumon kaj la alsendan adreson antaŭ ol sendi.</translation>
     </message>
     <message>
-        <source>These are your Yangcoin addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
-        <translation>Jen viaj yangcoin j adresoj por ricevi pagojn. Estas konsilinde uzi apartan ricevan adreson por ĉiu transakcio.</translation>
+        <source>These are your JBCoin addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
+        <translation>Jen viaj jbcoin j adresoj por ricevi pagojn. Estas konsilinde uzi apartan ricevan adreson por ĉiu transakcio.</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
@@ -214,8 +214,8 @@
         <translation>Reindeksado de blokoj sur disko...</translation>
     </message>
     <message>
-        <source>Send coins to a Yangcoin address</source>
-        <translation>Sendi monon al Yangcoin-adreso</translation>
+        <source>Send coins to a JBCoin address</source>
+        <translation>Sendi monon al JBCoin-adreso</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -238,8 +238,8 @@
         <translation>&amp;Kontroli mesaĝon...</translation>
     </message>
     <message>
-        <source>Yangcoin</source>
-        <translation>Yangcoino</translation>
+        <source>JBCoin</source>
+        <translation>JBCoino</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -266,12 +266,12 @@
         <translation>Ĉifri la privatajn ŝlosilojn de via monujo</translation>
     </message>
     <message>
-        <source>Sign messages with your Yangcoin addresses to prove you own them</source>
-        <translation>Subskribi mesaĝojn per via Yangcoin-adresoj por pravigi, ke vi estas la posedanto</translation>
+        <source>Sign messages with your JBCoin addresses to prove you own them</source>
+        <translation>Subskribi mesaĝojn per via JBCoin-adresoj por pravigi, ke vi estas la posedanto</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified Yangcoin addresses</source>
-        <translation>Kontroli mesaĝojn por kontroli ĉu ili estas subskribitaj per specifaj Yangcoin-adresoj</translation>
+        <source>Verify messages to ensure they were signed with specified JBCoin addresses</source>
+        <translation>Kontroli mesaĝojn por kontroli ĉu ili estas subskribitaj per specifaj JBCoin-adresoj</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -290,8 +290,8 @@
         <translation>Langeto-breto</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and yangcoin: URIs)</source>
-        <translation>Peti pagon (kreas QR-kodojn kaj URI-ojn kun prefikso yangcoin:)</translation>
+        <source>Request payments (generates QR codes and jbcoin: URIs)</source>
+        <translation>Peti pagon (kreas QR-kodojn kaj URI-ojn kun prefikso jbcoin:)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -302,8 +302,8 @@
         <translation>Vidigi la liston de uzitaj ricevaj adresoj kaj etikedoj</translation>
     </message>
     <message>
-        <source>Open a yangcoin: URI or payment request</source>
-        <translation>Malfermi yangcoin:-URI-on aŭ pagpeton</translation>
+        <source>Open a jbcoin: URI or payment request</source>
+        <translation>Malfermi jbcoin:-URI-on aŭ pagpeton</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
@@ -628,8 +628,8 @@
         <translation>Fakulo</translation>
     </message>
     <message>
-        <source>Automatically open the Yangcoin client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Aŭtomate malfermi la kursilan pordon por Yangcoino. Tio funkcias nur se via kursilo havas la UPnP-funkcion, kaj se tiu ĉi estas ŝaltita.</translation>
+        <source>Automatically open the JBCoin client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>Aŭtomate malfermi la kursilan pordon por JBCoino. Tio funkcias nur se via kursilo havas la UPnP-funkcion, kaj se tiu ĉi estas ŝaltita.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
@@ -723,7 +723,7 @@
         <translation>Formularo</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Yangcoin network after a connection is established, but this process has not completed yet.</source>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the JBCoin network after a connection is established, but this process has not completed yet.</source>
         <translation>Eblas, ke la informoj videblaj ĉi tie estas eksdataj. Via monujo aŭtomate sinkoniĝas kun la liteoin reto kiam ili konektiĝas, sed tiu procezo ankoraŭ ne finfariĝis.</translation>
     </message>
     <message>
@@ -1030,7 +1030,7 @@
     <name>SendCoinsDialog</name>
     <message>
         <source>Send Coins</source>
-        <translation>Sendi Yangcoinon</translation>
+        <translation>Sendi JBCoinon</translation>
     </message>
     <message>
         <source>Coin Control Features</source>
@@ -1213,8 +1213,8 @@
         <translation>Kopii la aktualan subskribon al la tondejo</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this Yangcoin address</source>
-        <translation>Subskribi la mesaĝon por pravigi, ke vi estas la posedanto de tiu Yangcoin-adreso</translation>
+        <source>Sign the message to prove you own this JBCoin address</source>
+        <translation>Subskribi la mesaĝon por pravigi, ke vi estas la posedanto de tiu JBCoin-adreso</translation>
     </message>
     <message>
         <source>Sign &amp;Message</source>
@@ -1233,8 +1233,8 @@
         <translation>&amp;Kontroli Mesaĝon</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified Yangcoin address</source>
-        <translation>Kontroli la mesaĝon por pravigi, ke ĝi ja estas subskribita per la specifa Yangcoin-adreso</translation>
+        <source>Verify the message to ensure it was signed with the specified JBCoin address</source>
+        <translation>Kontroli la mesaĝon por pravigi, ke ĝi ja estas subskribita per la specifa JBCoin-adreso</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -1338,8 +1338,8 @@
         <translation>Ruli fone kiel demono kaj akcepti komandojn</translation>
     </message>
     <message>
-        <source>Yangcoin Core</source>
-        <translation>Kerno de Yangcoin</translation>
+        <source>JBCoin Core</source>
+        <translation>Kerno de JBCoin</translation>
     </message>
     <message>
         <source>Bind to given address and always listen on it. Use [host]:port notation for IPv6</source>

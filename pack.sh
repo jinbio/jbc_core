@@ -1,5 +1,5 @@
 #!/bin/sh
-coin=yangcoin
+coin=jbcoin
 version=0.14.2
 platform=`uname -a | awk '{print tolower($1)}'`
 arch=`uname -m`

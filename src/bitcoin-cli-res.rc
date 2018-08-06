@@ -16,14 +16,14 @@ BEGIN
     BEGIN
         BLOCK "040904E4" // U.S. English - multilingual (hex)
         BEGIN
-            VALUE "CompanyName",        "Yangcoin"
-            VALUE "FileDescription",    "yangcoin-cli (JSON-RPC client for " PACKAGE_NAME ")"
+            VALUE "CompanyName",        "JBCoin"
+            VALUE "FileDescription",    "jbcoin-cli (JSON-RPC client for " PACKAGE_NAME ")"
             VALUE "FileVersion",        VER_FILEVERSION_STR
-            VALUE "InternalName",       "yangcoin-cli"
+            VALUE "InternalName",       "jbcoin-cli"
             VALUE "LegalCopyright",     COPYRIGHT_STR
             VALUE "LegalTrademarks1",   "Distributed under the MIT software license, see the accompanying file COPYING or http://www.opensource.org/licenses/mit-license.php."
-            VALUE "OriginalFilename",   "yangcoin-cli.exe"
-            VALUE "ProductName",        "yangcoin-cli"
+            VALUE "OriginalFilename",   "jbcoin-cli.exe"
+            VALUE "ProductName",        "jbcoin-cli"
             VALUE "ProductVersion",     VER_PRODUCTVERSION_STR
         END
     END

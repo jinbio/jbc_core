@@ -158,8 +158,8 @@
         <translation>Lemezen lévő blokkok újraindexelése...</translation>
     </message>
     <message>
-        <source>Send coins to a Yangcoin address</source>
-        <translation>Yangcoin küldése megadott címre</translation>
+        <source>Send coins to a JBCoin address</source>
+        <translation>JBCoin küldése megadott címre</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -182,8 +182,8 @@
         <translation>Üzenet &amp;valódiságának ellenőrzése</translation>
     </message>
     <message>
-        <source>Yangcoin</source>
-        <translation>Yangcoin</translation>
+        <source>JBCoin</source>
+        <translation>JBCoin</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -210,12 +210,12 @@
         <translation>A tárcádhoz tartozó privát kulcsok titkosítása</translation>
     </message>
     <message>
-        <source>Sign messages with your Yangcoin addresses to prove you own them</source>
-        <translation>Üzenetek aláírása a Yangcoin-címmeiddel, amivel bizonyítod, hogy a cím a sajátod</translation>
+        <source>Sign messages with your JBCoin addresses to prove you own them</source>
+        <translation>Üzenetek aláírása a JBCoin-címmeiddel, amivel bizonyítod, hogy a cím a sajátod</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified Yangcoin addresses</source>
-        <translation>Üzenetek ellenőrzése, hogy valóban a megjelölt Yangcoin-címekkel vannak-e aláírva</translation>
+        <source>Verify messages to ensure they were signed with specified JBCoin addresses</source>
+        <translation>Üzenetek ellenőrzése, hogy valóban a megjelölt JBCoin-címekkel vannak-e aláírva</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -234,8 +234,8 @@
         <translation>Fül eszköztár</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and yangcoin: URIs)</source>
-        <translation>Fizetési kérelem (QR-kódot és "yangcoin:" URI azonosítót hoz létre)</translation>
+        <source>Request payments (generates QR codes and jbcoin: URIs)</source>
+        <translation>Fizetési kérelem (QR-kódot és "jbcoin:" URI azonosítót hoz létre)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -246,16 +246,16 @@
         <translation>A használt fogadó címek és címkék megtekintése</translation>
     </message>
     <message>
-        <source>Open a yangcoin: URI or payment request</source>
-        <translation>"yangcoin:" URI azonosító vagy fizetési kérelem megnyitása</translation>
+        <source>Open a jbcoin: URI or payment request</source>
+        <translation>"jbcoin:" URI azonosító vagy fizetési kérelem megnyitása</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
         <translation>Paran&amp;cssor kapcsolók</translation>
     </message>
     <message numerus="yes">
-        <source>%n active connection(s) to Yangcoin network</source>
-        <translation><numerusform>%n aktív kapcsolat a Yangcoin hálózathoz</numerusform><numerusform>%n aktív kapcsolat a Yangcoin hálózathoz</numerusform></translation>
+        <source>%n active connection(s) to JBCoin network</source>
+        <translation><numerusform>%n aktív kapcsolat a JBCoin hálózathoz</numerusform><numerusform>%n aktív kapcsolat a JBCoin hálózathoz</numerusform></translation>
     </message>
     <message numerus="yes">
         <source>Processed %n block(s) of transaction history.</source>
@@ -592,16 +592,16 @@
         <translation>Szakértő</translation>
     </message>
     <message>
-        <source>Automatically open the Yangcoin client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>A Yangcoin-kliens portjának automatikus megnyitása a routeren. Ez csak akkor működik, ha a routered támogatja az UPnP-t és az engedélyezve is van rajta.</translation>
+        <source>Automatically open the JBCoin client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>A JBCoin-kliens portjának automatikus megnyitása a routeren. Ez csak akkor működik, ha a routered támogatja az UPnP-t és az engedélyezve is van rajta.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
         <translation>&amp;UPnP port-feltérképezés</translation>
     </message>
     <message>
-        <source>Connect to the Yangcoin network through a SOCKS5 proxy.</source>
-        <translation>Csatlakozás a Yangcoin hálózatához SOCKS5 proxyn keresztül</translation>
+        <source>Connect to the JBCoin network through a SOCKS5 proxy.</source>
+        <translation>Csatlakozás a JBCoin hálózatához SOCKS5 proxyn keresztül</translation>
     </message>
     <message>
         <source>Proxy &amp;IP:</source>
@@ -695,8 +695,8 @@
         <translation>Űrlap</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Yangcoin network after a connection is established, but this process has not completed yet.</source>
-        <translation>A kijelzett információ lehet, hogy elavult. A pénztárcája automatikusan szinkronizálja magát a Yangcoin hálózattal miután a kapcsolat létrejön, de ez e folyamat még nem fejeződött be.</translation>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the JBCoin network after a connection is established, but this process has not completed yet.</source>
+        <translation>A kijelzett információ lehet, hogy elavult. A pénztárcája automatikusan szinkronizálja magát a JBCoin hálózattal miután a kapcsolat létrejön, de ez e folyamat még nem fejeződött be.</translation>
     </message>
     <message>
         <source>Watch-only:</source>
@@ -764,8 +764,8 @@
         <translation>Összeg</translation>
     </message>
     <message>
-        <source>Enter a Yangcoin address (e.g. %1)</source>
-        <translation>Ad meg egy Yangcoin címet (pl: %1)</translation>
+        <source>Enter a JBCoin address (e.g. %1)</source>
+        <translation>Ad meg egy JBCoin címet (pl: %1)</translation>
     </message>
     <message>
         <source>%1 d</source>
@@ -1285,7 +1285,7 @@
         <translation>A jelenleg kiválasztott aláírás másolása a rendszer-vágólapra</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this Yangcoin address</source>
+        <source>Sign the message to prove you own this JBCoin address</source>
         <translation>Üzenet </translation>
     </message>
     <message>
@@ -1378,8 +1378,8 @@
 </translation>
     </message>
     <message>
-        <source>Yangcoin Core</source>
-        <translation>Yangcoin Core</translation>
+        <source>JBCoin Core</source>
+        <translation>JBCoin Core</translation>
     </message>
     <message>
         <source>Execute command when a wallet transaction changes (%s in cmd is replaced by TxID)</source>
@@ -1533,7 +1533,7 @@
     </message>
     <message>
         <source>Insufficient funds</source>
-        <translation>Nincs elég yangcoin od.</translation>
+        <translation>Nincs elég jbcoin od.</translation>
     </message>
     <message>
         <source>Loading block index...</source>

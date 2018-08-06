@@ -130,8 +130,8 @@
         <translation>Промени &amp;лозинку...</translation>
     </message>
     <message>
-        <source>Send coins to a Yangcoin address</source>
-        <translation>Пошаљите новац на yangcoin адресу</translation>
+        <source>Send coins to a JBCoin address</source>
+        <translation>Пошаљите новац на jbcoin адресу</translation>
     </message>
     <message>
         <source>Change the passphrase used for wallet encryption</source>

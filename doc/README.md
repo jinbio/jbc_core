@@ -1,41 +1,41 @@
-Yangcoin Core 0.14.2
+JBCoin Core 0.14.2
 =====================
 
 Setup
 ---------------------
-Yangcoin Core is the original Yangcoin client and it builds the backbone of the network. However, it downloads and stores the entire history of Yangcoin transactions (which is currently several GBs); depending on the speed of your computer and network connection, the synchronization process can take anywhere from a few hours to a day or more.
+JBCoin Core is the original JBCoin client and it builds the backbone of the network. However, it downloads and stores the entire history of JBCoin transactions (which is currently several GBs); depending on the speed of your computer and network connection, the synchronization process can take anywhere from a few hours to a day or more.
 
-To download Yangcoin Core, visit [yangcoinnu.com](http://www.yangcoin.org).
+To download JBCoin Core, visit [jbcoinnu.com](http://www.jbcoin.org).
 
 Running
 ---------------------
-The following are some helpful notes on how to run Yangcoin on your native platform.
+The following are some helpful notes on how to run JBCoin on your native platform.
 
 ### Unix
 
 Unpack the files into a directory and run:
 
-- `bin/yangcoin-qt` (GUI) or
-- `bin/yangcoind` (headless)
+- `bin/jbcoin-qt` (GUI) or
+- `bin/jbcoind` (headless)
 
 ### Windows
 
-Unpack the files into a directory, and then run yangcoin-qt.exe.
+Unpack the files into a directory, and then run jbcoin-qt.exe.
 
 ### OS X
 
-Drag Yangcoin-Core to your applications folder, and then run Yangcoin-Core.
+Drag JBCoin-Core to your applications folder, and then run JBCoin-Core.
 
 ### Need Help?
 
-* See the documentation at the [Yangcoin Wiki](https://yangcoin.info/)
+* See the documentation at the [JBCoin Wiki](https://jbcoin.info/)
 for help and more information.
-* Ask for help on [#yangcoin](http://webchat.freenode.net?channels=yangcoin) on Freenode. If you don't have an IRC client use [webchat here](http://webchat.freenode.net?channels=yangcoin).
-* Ask for help on the [YangcoinTalk](https://yangcointalk.io/) forums.
+* Ask for help on [#jbcoin](http://webchat.freenode.net?channels=jbcoin) on Freenode. If you don't have an IRC client use [webchat here](http://webchat.freenode.net?channels=jbcoin).
+* Ask for help on the [JBCoinTalk](https://jbcointalk.io/) forums.
 
 Building
 ---------------------
-The following are developer notes on how to build Yangcoin on your native platform. They are not complete guides, but include notes on the necessary libraries, compile flags, etc.
+The following are developer notes on how to build JBCoin on your native platform. They are not complete guides, but include notes on the necessary libraries, compile flags, etc.
 
 - [OS X Build Notes](build-osx.md)
 - [Unix Build Notes](build-unix.md)
@@ -45,12 +45,12 @@ The following are developer notes on how to build Yangcoin on your native platfo
 
 Development
 ---------------------
-The Yangcoin repo's [root README](/README.md) contains relevant information on the development process and automated testing.
+The JBCoin repo's [root README](/README.md) contains relevant information on the development process and automated testing.
 
 - [Developer Notes](developer-notes.md)
 - [Release Notes](release-notes.md)
 - [Release Process](release-process.md)
-- [Source Code Documentation (External Link)](https://dev.visucore.com/yangcoin/doxygen/)
+- [Source Code Documentation (External Link)](https://dev.visucore.com/jbcoin/doxygen/)
 - [Translation Process](translation_process.md)
 - [Translation Strings Policy](translation_strings_policy.md)
 - [Travis CI](travis-ci.md)
@@ -61,8 +61,8 @@ The Yangcoin repo's [root README](/README.md) contains relevant information on t
 - [Benchmarking](benchmarking.md)
 
 ### Resources
-* Discuss on the [YangcoinTalk](https://yangcointalk.io/) forums.
-* Discuss general Yangcoin development on #yangcoin-dev on Freenode. If you don't have an IRC client use [webchat here](http://webchat.freenode.net/?channels=yangcoin-dev).
+* Discuss on the [JBCoinTalk](https://jbcointalk.io/) forums.
+* Discuss general JBCoin development on #jbcoin-dev on Freenode. If you don't have an IRC client use [webchat here](http://webchat.freenode.net/?channels=jbcoin-dev).
 
 ### Miscellaneous
 - [Assets Attribution](assets-attribution.md)

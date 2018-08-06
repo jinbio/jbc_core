@@ -1,5 +1,5 @@
 ---
-name: "yangcoin-dmg-signer"
+name: "jbcoin-dmg-signer"
 suites:
 - "trusty"
 architectures:
@@ -7,10 +7,10 @@ architectures:
 packages:
 - "faketime"
 remotes:
-- "url": "https://github.com/yangcoin/yangcoin-detached-sigs.git"
+- "url": "https://github.com/jbcoin/jbcoin-detached-sigs.git"
   "dir": "signature"
 files:
-- "yangcoin-osx-unsigned.tar.gz"
+- "jbcoin-osx-unsigned.tar.gz"
 script: |
   WRAP_DIR=$HOME/wrapped
   mkdir -p ${WRAP_DIR}
@@ -27,8 +27,8 @@ script: |
     chmod +x ${WRAP_DIR}/${prog}
   done
 
-  UNSIGNED=yangcoin-osx-unsigned.tar.gz
-  SIGNED=yangcoin-osx-signed.dmg
+  UNSIGNED=jbcoin-osx-unsigned.tar.gz
+  SIGNED=jbcoin-osx-signed.dmg
 
   tar -xf ${UNSIGNED}
   OSX_VOLNAME="$(cat osx_volname)"

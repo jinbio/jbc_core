@@ -126,8 +126,8 @@
         <translation>Abrir &amp;URL...</translation>
     </message>
     <message>
-        <source>Send coins to a Yangcoin address</source>
-        <translation>Enviando monedas a una dirección de Yangcoin</translation>
+        <source>Send coins to a JBCoin address</source>
+        <translation>Enviando monedas a una dirección de JBCoin</translation>
     </message>
     <message>
         <source>Change the passphrase used for wallet encryption</source>
@@ -146,8 +146,8 @@
         <translation>&amp;Verificar Mensaje...</translation>
     </message>
     <message>
-        <source>Yangcoin</source>
-        <translation>Yangcoin</translation>
+        <source>JBCoin</source>
+        <translation>JBCoin</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -296,8 +296,8 @@
 <context>
     <name>bitcoin-core</name>
     <message>
-        <source>Yangcoin Core</source>
-        <translation>Yangcoin Core</translation>
+        <source>JBCoin Core</source>
+        <translation>JBCoin Core</translation>
     </message>
     <message>
         <source>Insufficient funds</source>

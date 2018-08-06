@@ -510,8 +510,8 @@ std::string HelpMessage(HelpMessageMode mode)
 
 std::string LicenseInfo()
 {
-    const std::string URL_SOURCE_CODE = "<https://github.com/yangcoin/yangcoin>";
-    const std::string URL_WEBSITE = "<http://www.yangcoin.org>";
+    const std::string URL_SOURCE_CODE = "<https://github.com/jbcoin/jbcoin>";
+    const std::string URL_WEBSITE = "<http://www.jbcoin.org>";
 
     return CopyrightHolders(strprintf(_("Copyright (C) %i-%i"), 2017, COPYRIGHT_YEAR) + " ") + "\n" +
            "\n" +
@@ -793,7 +793,7 @@ void InitLogging()
     fLogIPs = GetBoolArg("-logips", DEFAULT_LOGIPS);
 
     LogPrintf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-    LogPrintf("Yangcoin version %s\n", FormatFullVersion());
+    LogPrintf("JBCoin version %s\n", FormatFullVersion());
 }
 
 namespace { // Variables internal to initialization process only

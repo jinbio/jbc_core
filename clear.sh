@@ -1,7 +1,7 @@
 #!/bin/sh
 timestamp=$( date +%Y%m%d-%H%M%S )
 datadir=data
-corename=yangcoin
+corename=jbcoin
 echo $timestamp
 cp ${datadir}/wallet.dat ./wallet.dat.$timestamp
 cp ${datadir}/${corename}.conf ./${corename}.conf.$timestamp

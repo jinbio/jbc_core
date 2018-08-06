@@ -122,8 +122,8 @@
         <translation>Address king pamag-Tanggap</translation>
     </message>
     <message>
-        <source>Send coins to a Yangcoin address</source>
-        <translation>Magpadalang barya king Yangcoin address</translation>
+        <source>Send coins to a JBCoin address</source>
+        <translation>Magpadalang barya king JBCoin address</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -146,8 +146,8 @@
         <translation>&amp;Beripikan ing message...</translation>
     </message>
     <message>
-        <source>Yangcoin</source>
-        <translation>Yangcoin</translation>
+        <source>JBCoin</source>
+        <translation>JBCoin</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -322,8 +322,8 @@
         <translation>&amp;Network</translation>
     </message>
     <message>
-        <source>Automatically open the Yangcoin client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Ibuklat yang antimanu ing Yangcoin client port king router. Gagana yamu ini istung ing router mu susuporta yang UPnP at magsilbi ya.</translation>
+        <source>Automatically open the JBCoin client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>Ibuklat yang antimanu ing JBCoin client port king router. Gagana yamu ini istung ing router mu susuporta yang UPnP at magsilbi ya.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
@@ -397,8 +397,8 @@
         <translation>Form</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Yangcoin network after a connection is established, but this process has not completed yet.</source>
-        <translation>Ing makaltong impormasion mapalyaring luma ne. Ing kekang wallet otomatiku yang mag-synchronize keng Yangcoin network istung mekakonekta ne king network, oneng ing prosesung ini ali ya pa kumpletu.</translation>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the JBCoin network after a connection is established, but this process has not completed yet.</source>
+        <translation>Ing makaltong impormasion mapalyaring luma ne. Ing kekang wallet otomatiku yang mag-synchronize keng JBCoin network istung mekakonekta ne king network, oneng ing prosesung ini ali ya pa kumpletu.</translation>
     </message>
     <message>
         <source>Your current spendable balance</source>
@@ -655,8 +655,8 @@
         <translation>Kopyan ing kasalungsungan pirma king system clipboard</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this Yangcoin address</source>
-        <translation>Pirman ing mensayi ban patune na keka ya ining Yangcoin address</translation>
+        <source>Sign the message to prove you own this JBCoin address</source>
+        <translation>Pirman ing mensayi ban patune na keka ya ining JBCoin address</translation>
     </message>
     <message>
         <source>Sign &amp;Message</source>
@@ -675,8 +675,8 @@
         <translation>&amp;Beripikan ing Mensayi</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified Yangcoin address</source>
-        <translation>Beripikan ing mensayi ban asiguradu a me pirma ya ini gamit ing mepiling Yangcoin address</translation>
+        <source>Verify the message to ensure it was signed with the specified JBCoin address</source>
+        <translation>Beripikan ing mensayi ban asiguradu a me pirma ya ini gamit ing mepiling JBCoin address</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -752,8 +752,8 @@
         <translation>Gumana king gulut bilang daemon at tumanggap commands</translation>
     </message>
     <message>
-        <source>Yangcoin Core</source>
-        <translation>Kapilubluban ning Yangcoin</translation>
+        <source>JBCoin Core</source>
+        <translation>Kapilubluban ning JBCoin</translation>
     </message>
     <message>
         <source>Block creation options:</source>

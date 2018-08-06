@@ -62,12 +62,12 @@
         <translation>Vastuvõtvad aadressid</translation>
     </message>
     <message>
-        <source>These are your Yangcoin addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>Need on sinu Yangcoin aadressid maksete saatmiseks. Ennem müntide saatmist kontrolli alati summat ja makse saaja aadressi.</translation>
+        <source>These are your JBCoin addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
+        <translation>Need on sinu JBCoin aadressid maksete saatmiseks. Ennem müntide saatmist kontrolli alati summat ja makse saaja aadressi.</translation>
     </message>
     <message>
-        <source>These are your Yangcoin addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
-        <translation>Need on sinu Yangcoin aadressid sisenevate maksete vastu võtmiseks. Soovitav on iga tehingu tarbeks kasutada uut aadressi.</translation>
+        <source>These are your JBCoin addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
+        <translation>Need on sinu JBCoin aadressid sisenevate maksete vastu võtmiseks. Soovitav on iga tehingu tarbeks kasutada uut aadressi.</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
@@ -168,8 +168,8 @@
         <translation>Kinnita rahakoti krüpteerimine.</translation>
     </message>
     <message>
-        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR YANGCOIN&lt;/b&gt;!</source>
-        <translation>Hoiatus:Kui sa krüpteerid oma rahakoti ja kaotad salafraasi, siis sa&lt;b&gt;KAOTAD OMA YANGCOINID&lt;/b&gt;!</translation>
+        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR JBCOIN&lt;/b&gt;!</source>
+        <translation>Hoiatus:Kui sa krüpteerid oma rahakoti ja kaotad salafraasi, siis sa&lt;b&gt;KAOTAD OMA JBCOINID&lt;/b&gt;!</translation>
     </message>
     <message>
         <source>Are you sure you wish to encrypt your wallet?</source>
@@ -290,8 +290,8 @@
         <translation>Kettal olevate blokkide re-indekseerimine...</translation>
     </message>
     <message>
-        <source>Send coins to a Yangcoin address</source>
-        <translation>Saada münte Yangcoini aadressile</translation>
+        <source>Send coins to a JBCoin address</source>
+        <translation>Saada münte JBCoini aadressile</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -314,8 +314,8 @@
         <translation>&amp;Kontrolli sõnumit...</translation>
     </message>
     <message>
-        <source>Yangcoin</source>
-        <translation>Yangcoin</translation>
+        <source>JBCoin</source>
+        <translation>JBCoin</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -342,12 +342,12 @@
         <translation>Krüpteeri oma rahakoti privaatvõtmed</translation>
     </message>
     <message>
-        <source>Sign messages with your Yangcoin addresses to prove you own them</source>
-        <translation>Omandi tõestamiseks allkirjasta sõnumid oma Yangcoini aadressiga</translation>
+        <source>Sign messages with your JBCoin addresses to prove you own them</source>
+        <translation>Omandi tõestamiseks allkirjasta sõnumid oma JBCoini aadressiga</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified Yangcoin addresses</source>
-        <translation>Kinnita sõnumid kindlustamaks et need allkirjastati määratud Yangcoini aadressiga</translation>
+        <source>Verify messages to ensure they were signed with specified JBCoin addresses</source>
+        <translation>Kinnita sõnumid kindlustamaks et need allkirjastati määratud JBCoini aadressiga</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -366,20 +366,20 @@
         <translation>Vahelehe tööriistariba</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and yangcoin: URIs)</source>
-        <translation>Loo maksepäring (genereerib QR koodid ja yangcoin i: URId)</translation>
+        <source>Request payments (generates QR codes and jbcoin: URIs)</source>
+        <translation>Loo maksepäring (genereerib QR koodid ja jbcoin i: URId)</translation>
     </message>
     <message>
-        <source>Open a yangcoin: URI or payment request</source>
-        <translation>Ava yangcoin i: URI või maksepäring</translation>
+        <source>Open a jbcoin: URI or payment request</source>
+        <translation>Ava jbcoin i: URI või maksepäring</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
         <translation>Käsurea valikud</translation>
     </message>
     <message numerus="yes">
-        <source>%n active connection(s) to Yangcoin network</source>
-        <translation><numerusform>%n aktiivne ühendus Yangcoini võrku</numerusform><numerusform>%n aktiivset ühendust Yangcoini võrku</numerusform></translation>
+        <source>%n active connection(s) to JBCoin network</source>
+        <translation><numerusform>%n aktiivne ühendus JBCoini võrku</numerusform><numerusform>%n aktiivset ühendust JBCoini võrku</numerusform></translation>
     </message>
     <message>
         <source>Indexing blocks on disk...</source>
@@ -626,8 +626,8 @@
         <translation>Muuda saatvat aadressi</translation>
     </message>
     <message>
-        <source>The entered address "%1" is not a valid Yangcoin address.</source>
-        <translation>Sisestatud aadress "%1" ei ole korrektne Yangcoin aadress.</translation>
+        <source>The entered address "%1" is not a valid JBCoin address.</source>
+        <translation>Sisestatud aadress "%1" ei ole korrektne JBCoin aadress.</translation>
     </message>
     <message>
         <source>The entered address "%1" is already in the address book.</source>
@@ -756,8 +756,8 @@
         <translation>Ekspert</translation>
     </message>
     <message>
-        <source>Automatically open the Yangcoin client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Yangcoini kliendi pordi automaatne avamine ruuteris. Toimib, kui sinu ruuter aktsepteerib UPnP ühendust.</translation>
+        <source>Automatically open the JBCoin client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>JBCoini kliendi pordi automaatne avamine ruuteris. Toimib, kui sinu ruuter aktsepteerib UPnP ühendust.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
@@ -855,7 +855,7 @@
         <translation>Vorm</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Yangcoin network after a connection is established, but this process has not completed yet.</source>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the JBCoin network after a connection is established, but this process has not completed yet.</source>
         <translation>Kuvatav info ei pruugi olla ajakohane. Ühenduse loomisel süngitakse sinu rahakott automaatselt Liteconi võrgustikuga, kuid see toiming on hetkel lõpetamata.</translation>
     </message>
     <message>
@@ -1337,8 +1337,8 @@
         <translation>Maksepäring aegunud.</translation>
     </message>
     <message>
-        <source>Warning: Invalid Yangcoin address</source>
-        <translation>Hoiatus: Ebakorrektne Yangcoin aadress</translation>
+        <source>Warning: Invalid JBCoin address</source>
+        <translation>Hoiatus: Ebakorrektne JBCoin aadress</translation>
     </message>
     <message>
         <source>(no label)</source>
@@ -1417,8 +1417,8 @@
         <translation>&amp;Allkirjastamise teade</translation>
     </message>
     <message>
-        <source>The Yangcoin address to sign the message with</source>
-        <translation>Yangcoin aadress millega sõnum allkirjastada</translation>
+        <source>The JBCoin address to sign the message with</source>
+        <translation>JBCoin aadress millega sõnum allkirjastada</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -1449,8 +1449,8 @@
         <translation>Kopeeri praegune signatuur vahemällu</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this Yangcoin address</source>
-        <translation>Allkirjasta sõnum Yangcoini aadressi sulle kuulumise tõestamiseks</translation>
+        <source>Sign the message to prove you own this JBCoin address</source>
+        <translation>Allkirjasta sõnum JBCoini aadressi sulle kuulumise tõestamiseks</translation>
     </message>
     <message>
         <source>Sign &amp;Message</source>
@@ -1469,12 +1469,12 @@
         <translation>&amp;Kinnita Sõnum</translation>
     </message>
     <message>
-        <source>The Yangcoin address the message was signed with</source>
-        <translation>Yangcoin aadress millega sõnum on allkirjastatud</translation>
+        <source>The JBCoin address the message was signed with</source>
+        <translation>JBCoin aadress millega sõnum on allkirjastatud</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified Yangcoin address</source>
-        <translation>Kinnita sõnum tõestamaks selle allkirjastatust määratud Yangcoini aadressiga.</translation>
+        <source>Verify the message to ensure it was signed with the specified JBCoin address</source>
+        <translation>Kinnita sõnum tõestamaks selle allkirjastatust määratud JBCoini aadressiga.</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -1758,8 +1758,8 @@
         <translation>Tööta taustal ning aktsepteeri käsklusi</translation>
     </message>
     <message>
-        <source>Yangcoin Core</source>
-        <translation>Yangcoini tuumik</translation>
+        <source>JBCoin Core</source>
+        <translation>JBCoini tuumik</translation>
     </message>
     <message>
         <source>Bind to given address and always listen on it. Use [host]:port notation for IPv6</source>

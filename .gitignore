@@ -7,22 +7,22 @@ tasks.json
 data_copy
 data/*
 tmp/*
-src/yangcoin
-src/yangcoind
-src/yangcoin-cli
-src/yangcoin-tx
-src/test/test_yangcoin
-src/test/test_yangcoin_fuzzy
-src/qt/test/test_yangcoin-qt
+src/jbcoin
+src/jbcoind
+src/jbcoin-cli
+src/jbcoin-tx
+src/test/test_jbcoin
+src/test/test_jbcoin_fuzzy
+src/qt/test/test_jbcoin-qt
 data/*
 data2/*
-src/yangcoin
-src/yangcoind
-src/yangcoin-cli
-src/yangcoin-tx
-src/test/test_yangcoin
-src/test/test_yangcoin_fuzzy
-src/qt/test/test_yangcoin-qt
+src/jbcoin
+src/jbcoind
+src/jbcoin-cli
+src/jbcoin-tx
+src/test/test_jbcoin
+src/test/test_jbcoin_fuzzy
+src/qt/test/test_jbcoin-qt
 
 # autoreconf
 Makefile.in
@@ -89,16 +89,16 @@ src/qt/test/moc*.cpp
 # Compilation and Qt preprocessor part
 *.qm
 Makefile
-yangcoin-qt
-Yangcoin-Qt.app
-yangcoin-qt
-Yangcoin-Qt.app
-yangcoind
-yangcoin-cli
+jbcoin-qt
+JBCoin-Qt.app
+jbcoin-qt
+JBCoin-Qt.app
+jbcoind
+jbcoin-cli
 
 # Unit-tests
 Makefile.test
-yangcoin-qt_test
+jbcoin-qt_test
 src/test/buildenv.py
 
 # Resources cpp
@@ -112,7 +112,7 @@ build
 *.gcno
 *.gcda
 /*.info
-test_yangcoin.coverage/
+test_jbcoin.coverage/
 total.coverage/
 coverage_percent.txt
 
@@ -145,21 +145,21 @@ tasks.json
 data_copy
 data/*
 tmp/*
-src/yangcoin
-src/yangcoind
-src/yangcoin-cli
-src/yangcoin-tx
-src/test/test_yangcoin
-src/test/test_yangcoin_fuzzy
-src/qt/test/test_yangcoin-qt
+src/jbcoin
+src/jbcoind
+src/jbcoin-cli
+src/jbcoin-tx
+src/test/test_jbcoin
+src/test/test_jbcoin_fuzzy
+src/qt/test/test_jbcoin-qt
 data/*
-src/yangcoin
-src/yangcoind
-src/yangcoin-cli
-src/yangcoin-tx
-src/test/test_yangcoin
-src/test/test_yangcoin_fuzzy
-src/qt/test/test_yangcoin-qt
+src/jbcoin
+src/jbcoind
+src/jbcoin-cli
+src/jbcoin-tx
+src/test/test_jbcoin
+src/test/test_jbcoin_fuzzy
+src/qt/test/test_jbcoin-qt
 
 # autoreconf
 Makefile.in
@@ -226,16 +226,16 @@ src/qt/test/moc*.cpp
 # Compilation and Qt preprocessor part
 *.qm
 Makefile
-yangcoin-qt
-Yangcoin-Qt.app
-yangcoin-qt
-Yangcoin-Qt.app
-yangcoind
-yangcoin-cli
+jbcoin-qt
+JBCoin-Qt.app
+jbcoin-qt
+JBCoin-Qt.app
+jbcoind
+jbcoin-cli
 
 # Unit-tests
 Makefile.test
-yangcoin-qt_test
+jbcoin-qt_test
 src/test/buildenv.py
 
 # Resources cpp
@@ -249,7 +249,7 @@ build
 *.gcno
 *.gcda
 /*.info
-test_yangcoin.coverage/
+test_jbcoin.coverage/
 total.coverage/
 coverage_percent.txt
 

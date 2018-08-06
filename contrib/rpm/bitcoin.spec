@@ -27,9 +27,9 @@ Source1:	http://download.oracle.com/berkeley-db/db-%{bdbv}.NC.tar.gz
 Source10:	https://raw.githubusercontent.com/bitcoin/bitcoin/v%{version}/contrib/debian/examples/bitcoin.conf
 
 #man pages
-Source20:	https://raw.githubusercontent.com/bitcoin/bitcoin/v%{version}/doc/man/yangcoind.1
-Source21:	https://raw.githubusercontent.com/bitcoin/bitcoin/v%{version}/doc/man/yangcoin-cli.1
-Source22:	https://raw.githubusercontent.com/bitcoin/bitcoin/v%{version}/doc/man/yangcoin-qt.1
+Source20:	https://raw.githubusercontent.com/bitcoin/bitcoin/v%{version}/doc/man/jbcoind.1
+Source21:	https://raw.githubusercontent.com/bitcoin/bitcoin/v%{version}/doc/man/jbcoin-cli.1
+Source22:	https://raw.githubusercontent.com/bitcoin/bitcoin/v%{version}/doc/man/jbcoin-qt.1
 
 #selinux
 Source30:	https://raw.githubusercontent.com/bitcoin/bitcoin/v%{version}/contrib/rpm/bitcoin.te
@@ -300,10 +300,10 @@ touch -a -m -t 201511100546 %{buildroot}%{_datadir}/kde4/services/bitcoin-core.p
 %endif
 
 # man pages
-install -D -p %{SOURCE20} %{buildroot}%{_mandir}/man1/yangcoind.1
-install -p %{SOURCE21} %{buildroot}%{_mandir}/man1/yangcoin-cli.1
+install -D -p %{SOURCE20} %{buildroot}%{_mandir}/man1/jbcoind.1
+install -p %{SOURCE21} %{buildroot}%{_mandir}/man1/jbcoin-cli.1
 %if %{_buildqt}
-install -p %{SOURCE22} %{buildroot}%{_mandir}/man1/yangcoin-qt.1
+install -p %{SOURCE22} %{buildroot}%{_mandir}/man1/jbcoin-qt.1
 %endif
 
 # nuke these, we do extensive testing of binaries in %%check before packaging
@@ -382,7 +382,7 @@ rm -rf %{buildroot}
 %attr(0644,root,root) %{_datadir}/pixmaps/*.svg
 %attr(0644,root,root) %{_datadir}/pixmaps/*.png
 %attr(0644,root,root) %{_datadir}/pixmaps/*.xpm
-%attr(0644,root,root) %{_mandir}/man1/yangcoin-qt.1*
+%attr(0644,root,root) %{_mandir}/man1/jbcoin-qt.1*
 %endif
 
 %files libs
@@ -412,7 +412,7 @@ rm -rf %{buildroot}
 %dir %attr(0750,bitcoin,bitcoin) %{_localstatedir}/lib/bitcoin
 %config(noreplace) %attr(0600,root,root) %{_sysconfdir}/sysconfig/bitcoin
 %attr(0644,root,root) %{_datadir}/selinux/*/*.pp
-%attr(0644,root,root) %{_mandir}/man1/yangcoind.1*
+%attr(0644,root,root) %{_mandir}/man1/jbcoind.1*
 
 %files utils
 %defattr(-,root,root,-)
@@ -421,7 +421,7 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_bindir}/bitcoin-cli
 %attr(0755,root,root) %{_bindir}/bitcoin-tx
 %attr(0755,root,root) %{_bindir}/bench_bitcoin
-%attr(0644,root,root) %{_mandir}/man1/yangcoin-cli.1*
+%attr(0644,root,root) %{_mandir}/man1/jbcoin-cli.1*
 
 
 

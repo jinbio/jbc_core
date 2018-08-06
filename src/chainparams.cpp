@@ -170,7 +170,7 @@ public:
 
         vSeeds.clear();
         // Note that of those with the service bits flag, most only support a subset of possible options
-        vSeeds.push_back(CDNSSeedData("seed", "seed-yng.bitchk.com",true));
+        vSeeds.push_back(CDNSSeedData("seed", "seed-jbc.bitchk.com",true));
         
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,78);//Y
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,140);//y

@@ -66,11 +66,11 @@ TESTS =
 BENCHMARKS =
 
 if BUILD_BITCOIND
-  bin_PROGRAMS += yangcoind
+  bin_PROGRAMS += jbcoind
 endif
 
 if BUILD_BITCOIN_UTILS
-  bin_PROGRAMS += yangcoin-cli yangcoin-tx
+  bin_PROGRAMS += jbcoin-cli jbcoin-tx
 endif
 
 .PHONY: FORCE check-symbols check-security
@@ -354,16 +354,16 @@ nodist_libbitcoin_util_a_SOURCES = $(srcdir)/obj/build.h
 #
 
 # bitcoind binary #
-yangcoind_SOURCES = bitcoind.cpp
-yangcoind_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
-yangcoind_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-yangcoind_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+jbcoind_SOURCES = bitcoind.cpp
+jbcoind_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+jbcoind_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+jbcoind_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-yangcoind_SOURCES += bitcoind-res.rc
+jbcoind_SOURCES += bitcoind-res.rc
 endif
 
-yangcoind_LDADD = \
+jbcoind_LDADD = \
   $(LIBBITCOIN_SERVER) \
   $(LIBBITCOIN_COMMON) \
   $(LIBUNIVALUE) \
@@ -376,38 +376,38 @@ yangcoind_LDADD = \
   $(LIBMEMENV) \
   $(LIBSECP256K1)
 
-yangcoind_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS)
+jbcoind_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS)
 
 # bitcoin-cli binary #
-yangcoin_cli_SOURCES = bitcoin-cli.cpp
-yangcoin_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
-yangcoin_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-yangcoin_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+jbcoin_cli_SOURCES = bitcoin-cli.cpp
+jbcoin_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
+jbcoin_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+jbcoin_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-yangcoin_cli_SOURCES += bitcoin-cli-res.rc
+jbcoin_cli_SOURCES += bitcoin-cli-res.rc
 endif
 
-yangcoin_cli_LDADD = \
+jbcoin_cli_LDADD = \
   $(LIBBITCOIN_CLI) \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_UTIL) \
   $(LIBBITCOIN_CRYPTO)
 
-yangcoin_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
+jbcoin_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
 #
 
 # bitcoin-tx binary #
-yangcoin_tx_SOURCES = bitcoin-tx.cpp
-yangcoin_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
-yangcoin_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-yangcoin_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+jbcoin_tx_SOURCES = bitcoin-tx.cpp
+jbcoin_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+jbcoin_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+jbcoin_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-yangcoin_tx_SOURCES += bitcoin-tx-res.rc
+jbcoin_tx_SOURCES += bitcoin-tx-res.rc
 endif
 
-yangcoin_tx_LDADD = \
+jbcoin_tx_LDADD = \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_UTIL) \
@@ -415,7 +415,7 @@ yangcoin_tx_LDADD = \
   $(LIBBITCOIN_CRYPTO) \
   $(LIBSECP256K1)
 
-yangcoin_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS)
+jbcoin_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS)
 #
 
 # bitcoinconsensus library #

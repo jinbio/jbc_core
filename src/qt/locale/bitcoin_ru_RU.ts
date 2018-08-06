@@ -66,8 +66,8 @@
 <context>
     <name>BitcoinGUI</name>
     <message>
-        <source>Yangcoin</source>
-        <translation>Yangcoin Core</translation>
+        <source>JBCoin</source>
+        <translation>JBCoin Core</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
@@ -236,8 +236,8 @@
 <context>
     <name>bitcoin-core</name>
     <message>
-        <source>Yangcoin Core</source>
-        <translation>Yangcoin Core</translation>
+        <source>JBCoin Core</source>
+        <translation>JBCoin Core</translation>
     </message>
     <message>
         <source>Whitelisted peers cannot be DoS banned and their transactions are always relayed, even if they are already in the mempool, useful e.g. for a gateway</source>
