@@ -357,7 +357,8 @@ public:
     inline void Serialize(Stream& s) const {
         SerializeTransaction(*this, s);
     }
-
+    
+   
     /** This deserializing constructor is provided instead of an Unserialize method.
      *  Unserialize is not possible, since it would require overwriting const fields. */
     template <typename Stream>
@@ -391,7 +392,12 @@ public:
      * @return Total transaction size in bytes
      */
     unsigned int GetTotalSize() const;
-
+    
+    bool IsCoinStake() const
+    {
+        // the coin stake transaction is marked with the first output empty
+        return (vin.size() > 0 && (!vin[0].prevout.IsNull()) && vout.size() >= 2 && vout[0].IsEmpty());
+    }
     bool IsCoinBase() const
     {
         return (vin.size() == 1 && vin[0].prevout.IsNull());

@@ -1225,6 +1225,42 @@ bool ReadBlockFromDisk(CBlock& block, const CBlockIndex* pindex, const Consensus
     return true;
 }
 
+bool ReadFromDisk(CMutableTransaction& tx, CDiskTxPos& txindex, CBlockTreeDB& txdb, COutPoint prevout)
+{
+    if (!txdb.ReadTxIndex(prevout.hash, txindex)){
+    	LogPrintf("no tx index %s \n", prevout.hash.ToString());
+    	return false;
+    }
+    if (!ReadFromDisk(tx, txindex))
+        return false;
+    if (prevout.n >= tx.vout.size())
+    {
+        return false;
+    }
+    return true;
+}
+
+bool ReadFromDisk(CMutableTransaction& tx, CDiskTxPos& txindex)
+{
+    CAutoFile filein(OpenBlockFile(txindex, true), SER_DISK, CLIENT_VERSION);
+    if (filein.IsNull())
+        return error("CTransaction::ReadFromDisk() : OpenBlockFile failed");
+
+    // Read transaction
+    CBlockHeader header;
+    try {
+        filein >> header;
+        fseek(filein.Get(), txindex.nTxOffset, SEEK_CUR);
+        // CTransaction tx1(deserialize, filein);
+        // tx = &tx1;
+         filein >> tx;
+    }
+    catch (const std::exception& e) {
+        return error("%s: Deserialize or I/O error - %s", __func__, e.what());
+    }
+
+    return true;
+}
 CAmount GetBlockSubsidy(const CBlockIndex * pindexPrev , const Consensus::Params& consensusParams)
 {
     CAmount nSubsidy  = 0;

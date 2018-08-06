@@ -17,7 +17,7 @@
 #include "script/script_error.h"
 #include "sync.h"
 #include "versionbits.h"
-
+#include "txdb.h"
 #include <algorithm>
 #include <exception>
 #include <map>
@@ -955,7 +955,8 @@ bool GetAddressUnspent(uint160 addressHash, int type, std::vector<std::pair<CAdd
 bool WriteBlockToDisk(const CBlock& block, CDiskBlockPos& pos, const CMessageHeader::MessageStartChars& messageStart);
 bool ReadBlockFromDisk(CBlock& block, const CDiskBlockPos& pos, const Consensus::Params& consensusParams);
 bool ReadBlockFromDisk(CBlock& block, const CBlockIndex* pindex, const Consensus::Params& consensusParams);
-
+bool ReadFromDisk(CMutableTransaction& tx, CDiskTxPos& txindex, CBlockTreeDB& txdb, COutPoint prevout);
+bool ReadFromDisk(CMutableTransaction& tx, CDiskTxPos& txindex);
 /** Functions for validating blocks and updating the block tree */
 
 /** Context-independent validity checks */
