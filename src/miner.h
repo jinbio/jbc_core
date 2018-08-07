@@ -13,12 +13,12 @@
 #include <memory>
 #include "boost/multi_index_container.hpp"
 #include "boost/multi_index/ordered_index.hpp"
-
+#include "wallet/wallet.h"
 class CBlockIndex;
 class CChainParams;
-class CReserveKey;
+//class CReserveKey;
 class CScript;
-class CWallet;
+//class CWallet;
 
 namespace Consensus { struct Params; };
 
@@ -31,7 +31,8 @@ struct CBlockTemplate
     std::vector<int64_t> vTxSigOpsCost;
     std::vector<unsigned char> vchCoinbaseCommitment;
 };
-
+bool CheckStake(CBlock* pblock, CWallet& wallet, const CChainParams& chainparams);
+void ThreadStakeMiner(CWallet *pwallet, const CChainParams& chainparams);
 // Container for tracking updates to ancestor feerate as we include (parent)
 // transactions in a block
 struct CTxMemPoolModifiedEntry {
@@ -165,7 +166,7 @@ private:
 public:
     BlockAssembler(const CChainParams& chainparams);
     /** Construct a new block template with coinbase to scriptPubKeyIn */
-    std::unique_ptr<CBlockTemplate> CreateNewBlock(const CScript& scriptPubKeyIn, bool fMineWitnessTx=true);
+    std::unique_ptr<CBlockTemplate> CreateNewBlock(const CScript& scriptPubKeyIn, bool fMineWitnessTx=true,bool fProofOfStake=false);
 
 private:
     // utility functions

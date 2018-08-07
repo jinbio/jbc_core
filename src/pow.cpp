@@ -12,45 +12,20 @@
 #include "util.h"
 #include "validation.h"
 
-unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock, const Consensus::Params& params)
+unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock, bool fProofOfStake, const Consensus::Params& params)
 {
     unsigned int nProofOfWorkLimit = UintToArith256(params.powLimit).GetCompact();
 
     // Genesis block
-    if (pindexLast == NULL||pindexLast->nHeight < ( BLOCK_HEIGHT_INIT +1 )) { 
+    if (pindexLast == NULL ) { 
         LogPrint("mine", "init Limit %d ,%d\n" ,pindexLast->nHeight ,BLOCK_HEIGHT_INIT);
         return nProofOfWorkLimit;
     }
+    const CBlockIndex* pindexPrev = GetLastBlockIndex(pindexLast, fProofOfStake);
+    if(pindexPrev==NULL||pindexPrev->pprev==NULL){
+        return nProofOfWorkLimit;
+    }
     
-    // Only change once per difficulty adjustment interval
-    // DifficultyAdjustmentInterval = nPowTargetTimespan (1day, 86400) / nPowTargetSpacing (1min, 60 )  = 1440
-    // 하루의 시간 만큼 예상해서 구동된다.
-    // 난이도 조절이 되지 않는다.
-    // if ((pindexLast->nHeight+1) % params.DifficultyAdjustmentInterval() != 0)//특정주기에 도달하지 않으면... 매번 동작한다.
-    // {
-    //     if (params.fPowAllowMinDifficultyBlocks) //mainnet false, only test,regnet
-    //     {
-    //         // Special difficulty rule for testnet:
-    //         // we use MinDiffculty for mainnet
-    //         // If the new block's timestamp is more than 2* 10 minutes
-    //         // then allow mining of a min-difficulty block.
-    //         if (pblock->GetBlockTime() > pindexLast->GetBlockTime() + params.nPowTargetSpacing*4)//4분... 아차피 동작하지 않지만...
-    //             return nProofOfWorkLimit;
-    //         else
-    //         {
-    //             // Return the last non-special-min-difficulty-rules-block
-    //             const CBlockIndex* pindex = pindexLast;
-    //             while (pindex->pprev && pindex->nHeight % params.DifficultyAdjustmentInterval() != 0 && pindex->nBits == nProofOfWorkLimit)
-    //                 pindex = pindex->pprev;
-    //             return pindex->nBits;
-    //         }
-    //     }
-        
-    //     return pindexLast->nBits;
-    // }
-
-    //every time set retarget...
-    //
     if (pblock->GetBlockTime() > pindexLast->GetBlockTime() + params.nPowTargetSpacing*5){//1min *5 no block, will reset difficulty
         if(fDebug){ 
             LogPrint("mine", "%d too old net... gap:%s sec, new:%08x , prev:%08x \n" ,pindexLast->nHeight,
@@ -89,6 +64,18 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
     return CalculateNextWorkRequired(pindexLast, pindexFirst->GetBlockTime(), params);
 }
 
+static arith_uint256 GetTargetLimit(int64_t nTime, bool fProofOfStake, const Consensus::Params& params)
+{
+    uint256 nLimit;
+
+    if (fProofOfStake) {//같은결과가 나온다. 향후 특정버전에서의 결과를 다르게 하기 위해서...
+        nLimit = params.posLimit;
+    } else {
+        nLimit = params.powLimit;
+    }
+
+    return UintToArith256(nLimit);
+}
 /**
 지정된 시간만큼으로 다음 난이도를 결정한다.
 **/
@@ -117,7 +104,7 @@ unsigned int CalculateNextWorkRequired(const CBlockIndex* pindexLast, int64_t nF
     bnOld = bnNew;
 
     // JBCoin: intermediate uint256 can overflow by 1 bit
-    const arith_uint256 bnPowLimit = UintToArith256(params.powLimit);
+    const arith_uint256 bnPowLimit = GetTargetLimit(pindexLast->GetBlockTime(), pindexLast->IsProofOfStake(), params);
     bool fShift = bnNew.bits() > bnPowLimit.bits() - 1;
     if (fShift){
         bnNew >>= 1;
@@ -128,7 +115,7 @@ unsigned int CalculateNextWorkRequired(const CBlockIndex* pindexLast, int64_t nF
         bnNew <<= 1;
     }
 
-    if (bnNew > bnPowLimit){ 
+    if (bnNew <= 0 ||bnNew > bnPowLimit){ 
         bnNew = bnPowLimit;
     }
     return bnNew.GetCompact();

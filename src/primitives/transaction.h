@@ -438,7 +438,6 @@ struct CMutableTransaction
 
     CMutableTransaction();
     CMutableTransaction(const CTransaction& tx);
-
     template <typename Stream>
     inline void Serialize(Stream& s) const {
         SerializeTransaction(*this, s);

@@ -35,7 +35,7 @@
 #include "validationinterface.h"
 #include "versionbits.h"
 #include "warnings.h"
-
+#include "pubkey.h"
 #include <atomic>
 #include <sstream>
 
@@ -1231,6 +1231,7 @@ bool ReadFromDisk(CMutableTransaction& tx, CDiskTxPos& txindex, CBlockTreeDB& tx
     	LogPrintf("no tx index %s \n", prevout.hash.ToString());
     	return false;
     }
+    
     if (!ReadFromDisk(tx, txindex))
         return false;
     if (prevout.n >= tx.vout.size())
@@ -3302,7 +3303,7 @@ bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationState& sta
 {
     const int nHeight = pindexPrev == NULL ? 0 : pindexPrev->nHeight + 1;
     // Check proof of work
-    if (block.nBits != GetNextWorkRequired(pindexPrev, &block, consensusParams))
+    if (block.nBits != GetNextWorkRequired(pindexPrev, &block, true,consensusParams))
         return state.DoS(100, false, REJECT_INVALID, "bad-diffbits", false, "incorrect proof of work");
 
     // Check timestamp against prev
@@ -4686,3 +4687,99 @@ public:
         mapBlockIndex.clear();
     }
 } instance_of_cmaincleanup;
+
+
+
+static bool CheckBlockSignature(const CBlock& block, const uint256& hash)
+{
+    if (block.IsProofOfWork())
+        return block.vchBlockSig.empty();
+
+    if (block.vchBlockSig.empty())
+        return false;
+
+    vector<vector<unsigned char> > vSolutions;
+    txnouttype whichType;
+
+    const CTxOut& txout = block.vtx[1]->vout[1];
+
+    if (!Solver(txout.scriptPubKey, whichType, vSolutions))
+        return false;
+
+    if (whichType == TX_PUBKEY)
+    {
+        vector<unsigned char>& vchPubKey = vSolutions[0];
+        return CPubKey(vchPubKey).Verify(hash, block.vchBlockSig);
+    }
+    else
+    {
+        // Block signing key also can be encoded in the nonspendable output
+        // This allows to not pollute UTXO set with useless outputs e.g. in case of multisig staking
+
+        const CScript& script = txout.scriptPubKey;
+        CScript::const_iterator pc = script.begin();
+        opcodetype opcode;
+        vector<unsigned char> vchPushValue;
+
+        if (!script.GetOp(pc, opcode, vchPushValue))
+            return false;
+        if (opcode != OP_RETURN)
+            return false;
+        if (!script.GetOp(pc, opcode, vchPushValue))
+            return false;
+        if (!IsCompressedOrUncompressedPubKey(vchPushValue))
+            return false;
+        return CPubKey(vchPushValue).Verify(hash, block.vchBlockSig);
+    }
+
+    return false;
+}
+
+
+// ppcoin: total coin age spent in transaction, in the unit of coin-days.
+// Only those coins meeting minimum age requirement counts. As those
+// transactions not in main chain are not currently indexed so we
+// might not find out about their coin age. Older transactions are
+// guaranteed to be in main chain by sync-checkpoint. This rule is
+// introduced to help nodes establish a consistent view of the coin
+// age (trust score) of competing branches.
+bool GetCoinAge(const CTransaction& tx, CBlockTreeDB& txdb, const CBlockIndex* pindexPrev, uint64_t& nCoinAge)
+{
+	arith_uint256 bnCentSecond = 0;  // coin age in the unit of cent-seconds
+    nCoinAge = 0;
+
+    if (tx.IsCoinBase())
+        return true;
+
+    BOOST_FOREACH(const CTxIn& txin, tx.vin)
+    {
+        // First try finding the previous transaction in database
+        
+        CDiskTxPos txindex;
+        CMutableTransaction txPrevMu;
+        if (!ReadFromDisk(txPrevMu, txindex, *pblocktree, txin.prevout))
+            continue;  // previous transaction not in main chain
+        CTransaction txPrev(txPrevMu);
+        if (tx.nTime < txPrev.nTime)
+            return false;  // Transaction timestamp violation
+
+        
+        // Read block header
+        CBlock block;
+        const CDiskBlockPos& pos = CDiskBlockPos(txindex.nFile, txindex.nPos);
+        if (!ReadBlockFromDisk(block, pos, Params().GetConsensus()))
+            return false; // unable to read block of previous transaction
+        if (block.GetBlockTime() + Params().GetConsensus().nStakeMinAge > tx.nTime)
+            continue; // only count coins meeting min age requirement
+
+        int64_t nValueIn = txPrev.vout[txin.prevout.n].nValue;
+        bnCentSecond += arith_uint256(nValueIn) * (tx.nTime-txPrev.nTime) / CENT;
+
+        LogPrint("coinage", "coin age nValueIn=%d nTimeDiff=%d bnCentSecond=%s\n", nValueIn, tx.nTime - txPrev.nTime, bnCentSecond.ToString());
+    }
+
+    arith_uint256 bnCoinDay = bnCentSecond * CENT / COIN / (24 * 60 * 60);
+    LogPrint("coinage", "coin age bnCoinDay=%s\n", bnCoinDay.ToString());
+    nCoinAge = bnCoinDay.GetLow64();
+    return true;
+}

@@ -175,6 +175,9 @@ extern bool fRequireStandard;
 extern bool fCheckBlockIndex;
 extern bool fCheckpointsEnabled;
 extern size_t nCoinCacheUsage;
+
+extern int64_t nLastCoinStakeSearchInterval;
+
 /** A fee rate smaller than this is considered zero fee (for relaying, mining and transaction creation) */
 extern CFeeRate minRelayTxFee;
 /** Absolute maximum transaction fee (in satoshis) used by wallet and mempool (rejects high fee in sendrawtransaction) */
@@ -995,7 +998,7 @@ void UpdateUncommittedBlockStructures(CBlock& block, const CBlockIndex* pindexPr
 
 /** Produce the necessary coinbase commitment for a block (modifies the hash, don't call for mined blocks). */
 std::vector<unsigned char> GenerateCoinbaseCommitment(CBlock& block, const CBlockIndex* pindexPrev, const Consensus::Params& consensusParams);
-
+bool GetCoinAge(const CTransaction& tx, CBlockTreeDB& txdb, const CBlockIndex* pindexPrev, uint64_t& nCoinAge);
 /** RAII wrapper for VerifyDB: Verify consistency of the block and coin databases */
 class CVerifyDB {
 public:

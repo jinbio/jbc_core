@@ -221,6 +221,18 @@ std::string HelpMessageOpt(const std::string& option, const std::string& message
 int GetNumCores();
 
 void RenameThread(const char* name);
+ 
+std::string CopyrightHolders(const std::string& strPrefix);
+
+/**
+ * Return the number of physical cores available on the current system.
+ * @note This does not count virtual cores, such as those provided by HyperThreading
+ * when boost is newer than 1.56.
+ */
+int GetNumCores();
+
+void SetThreadPriority(int nPriority);
+void RenameThread(const char* name);
 
 /**
  * .. and a wrapper that just calls func once
@@ -249,7 +261,5 @@ template <typename Callable> void TraceThread(const char* name,  Callable func)
         throw;
     }
 }
-
-std::string CopyrightHolders(const std::string& strPrefix);
 
 #endif // BITCOIN_UTIL_H

@@ -156,7 +156,10 @@ enum BlockStatus : uint32_t {
     BLOCK_FAILED_CHILD = 64, //!< descends from failed block
     BLOCK_FAILED_MASK = BLOCK_FAILED_VALID | BLOCK_FAILED_CHILD,
 
-    BLOCK_OPT_WITNESS = 128, //!< block data in blk*.data was received with a witness-enforcing client
+    BLOCK_OPT_WITNESS = 128,    //!< block data in blk*.data was received with a witness-enforcing client
+    BLOCK_PROOF_OF_STAKE = 256, //! is proof-of-stake block
+    BLOCK_STAKE_ENTROPY = 512,
+    BLOCK_STAKE_MODIFIER = 1024,
 };
 
 /** The block chain is a tree shaped structure starting with the
@@ -290,7 +293,25 @@ public:
         block.nNonce = nNonce;
         return block;
     }
+    bool IsProofOfWork() const
+    {
+        return !IsProofOfStake();
+    }
 
+    bool IsProofOfStake() const
+    {
+        return (nStatus & BLOCK_PROOF_OF_STAKE);
+    }
+
+    void SetProofOfStake()
+    {
+        nStatus |= BLOCK_PROOF_OF_STAKE;
+    }
+     int64_t GetPastTimeLimit() const
+    {
+            return GetBlockTime();
+        
+    }
     uint256 GetBlockHash() const
     {
         return *phashBlock;
@@ -509,4 +530,5 @@ public:
     CBlockIndex* FindEarliestAtLeast(int64_t nTime) const;
 };
 
+const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfStake);
 #endif // BITCOIN_CHAIN_H

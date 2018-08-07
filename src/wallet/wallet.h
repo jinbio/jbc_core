@@ -41,6 +41,8 @@ extern unsigned int nTxConfirmTarget;
 extern bool bSpendZeroConfChange;
 extern bool fSendFreeTransactions;
 extern bool fWalletRbf;
+extern CAmount nReserveBalance;
+extern CAmount nMinimumInputValue;
 
 static const unsigned int DEFAULT_KEYPOOL_SIZE = 100;
 //! -paytxfee default
@@ -993,6 +995,12 @@ public:
     
     /* Set the current HD master key (will reset the chain child index counters) */
     bool SetHDMasterKey(const CPubKey& key);
+    bool CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int64_t nSearchInterval, CAmount& nFees, CMutableTransaction& tx, CKey& key);
+    bool SelectCoinsForStaking(CAmount& nTargetValue, std::set<std::pair<const CWalletTx*,unsigned int> >& setCoinsRet, CAmount& nValueRet) const;
+    void AvailableCoinsForStaking(std::vector<COutput>& vCoins) const;
+    uint64_t GetStakeWeight() const;
+    static const bool DEFAULT_STAKE_CACHE = true;
+
 };
 
 /** A key allocated from the key pool. */
