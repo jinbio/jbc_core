@@ -1449,6 +1449,7 @@ void UpdateCoins(const CTransaction& tx, CCoinsViewCache& inputs, CTxUndo &txund
                 CTxInUndo& undo = txundo.vprevout.back();
                 undo.nHeight = coins->nHeight;
                 undo.fCoinBase = coins->fCoinBase;
+                undo.fCoinStake = coins->fCoinStake;
                 undo.nVersion = coins->nVersion;
             }
         }
@@ -1769,9 +1770,9 @@ bool DisconnectBlock(const CBlock& block, CValidationState& state, const CBlockI
             // but it must be corrected before txout nversion ever influences a network rule.
             if (outsBlock.nVersion < 0)
                 outs->nVersion = outsBlock.nVersion;
-            if (*outs != outsBlock)
+            if (*outs != outsBlock) { 
                 fClean = fClean && error("DisconnectBlock(): added transaction mismatch? database corrupted");
-
+            }
             // remove outputs
             outs->Clear();
         }
@@ -1784,9 +1785,10 @@ bool DisconnectBlock(const CBlock& block, CValidationState& state, const CBlockI
             for (unsigned int j = tx.vin.size(); j-- > 0;) {
                 const COutPoint &out = tx.vin[j].prevout;
                 const CTxInUndo &undo = txundo.vprevout[j];
-                if (!ApplyTxInUndo(undo, view, out))
+                if (!ApplyTxInUndo(undo, view, out)) {
                     fClean = false;
-                    const CTxIn input = tx.vin[j];
+                }
+                const CTxIn input = tx.vin[j];
                     
                 if (fSpentIndex) {
                     // undo and delete the spent index
@@ -3303,8 +3305,10 @@ bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationState& sta
 {
     const int nHeight = pindexPrev == NULL ? 0 : pindexPrev->nHeight + 1;
     // Check proof of work
-    if (block.nBits != GetNextWorkRequired(pindexPrev, &block, true,consensusParams))
+    // TODO pos 블럭인지 , pow 블럭인지 헤더를 봐서는 알수 
+    if (block.nBits != GetNextWorkRequired(pindexPrev, &block, false,consensusParams)) { 
         return state.DoS(100, false, REJECT_INVALID, "bad-diffbits", false, "incorrect proof of work");
+    }
 
     // Check timestamp against prev
     if (block.GetBlockTime() <= pindexPrev->GetMedianTimePast())
@@ -3966,6 +3970,7 @@ bool CVerifyDB::VerifyDB(const CChainParams& chainparams, CCoinsView *coinsview,
     LogPrintf("Verifying last %i blocks at level %i\n", nCheckDepth, nCheckLevel);
     CCoinsViewCache coins(coinsview);
     CBlockIndex* pindexState = chainActive.Tip();
+    DbgMsg("xx %s" , pindexState->ToString());
     CBlockIndex* pindexFailure = NULL;
     int nGoodTransactions = 0;
     CValidationState state;
@@ -4006,12 +4011,15 @@ bool CVerifyDB::VerifyDB(const CChainParams& chainparams, CCoinsView *coinsview,
             }
         }
         // check level 3: check for inconsistencies during memory-only disconnect of tip blocks
+        DbgMsg("xxxxxxxx   %d %d %d ,%d" ,coins.DynamicMemoryUsage() , pcoinsTip->DynamicMemoryUsage() , nCoinCacheUsage ,pindex == pindexState);
+        DbgMsg("xx \n\t%s \n\t%s" , pindexState->ToString(),pindex->ToString() );
         if (nCheckLevel >= 3 && pindex == pindexState && (coins.DynamicMemoryUsage() + pcoinsTip->DynamicMemoryUsage()) <= nCoinCacheUsage) {
             bool fClean = true;
             if (!DisconnectBlock(block, state, pindex, coins, &fClean))
                 return error("VerifyDB(): *** irrecoverable inconsistency in block data at %d, hash=%s", pindex->nHeight, pindex->GetBlockHash().ToString());
             pindexState = pindex->pprev;
             if (!fClean) {
+                LogPrintf("not clean...");
                 nGoodTransactions = 0;
                 pindexFailure = pindex;
             } else

@@ -206,7 +206,6 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     pblock->hashPrevBlock  = pindexPrev->GetBlockHash();
     UpdateTime(pblock, chainparams.GetConsensus(), pindexPrev);
     pblock->nBits          = GetNextWorkRequired(pindexPrev, pblock, fProofOfStake,chainparams.GetConsensus());
-    DbgMsg("nBit %08x", pblock->nBits);
     pblock->nNonce         = 0;
     pblocktemplate->vTxSigOpsCost[0] = WITNESS_SCALE_FACTOR * GetLegacySigOpCount(*pblock->vtx[0]);
 
@@ -717,6 +716,7 @@ bool SignBlock(CBlock& block, CWallet& wallet, int64_t& nFees)
 #endif
 void ThreadStakeMiner(CWallet *pwallet, const CChainParams& chainparams)
 {
+    LogPrintf("staking start....");
 
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
 

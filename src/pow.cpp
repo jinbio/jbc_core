@@ -21,6 +21,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         LogPrint("mine", "init Limit %d ,%d\n" ,pindexLast->nHeight ,BLOCK_HEIGHT_INIT);
         return nProofOfWorkLimit;
     }
+    
     const CBlockIndex* pindexPrev = GetLastBlockIndex(pindexLast, fProofOfStake);
     if(pindexPrev==NULL||pindexPrev->pprev==NULL){
         return nProofOfWorkLimit;

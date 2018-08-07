@@ -4,11 +4,13 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "chain.h"
+#include "util.h"
 
 /**
  * CChain implementation
  */
-void CChain::SetTip(CBlockIndex *pindex) {
+void CChain::SetTip(CBlockIndex* pindex)
+{
     if (pindex == NULL) {
         vChain.clear();
         return;
@@ -20,7 +22,8 @@ void CChain::SetTip(CBlockIndex *pindex) {
     }
 }
 
-CBlockLocator CChain::GetLocator(const CBlockIndex *pindex) const {
+CBlockLocator CChain::GetLocator(const CBlockIndex* pindex) const
+{
     int nStep = 1;
     std::vector<uint256> vHave;
     vHave.reserve(32);
@@ -48,7 +51,8 @@ CBlockLocator CChain::GetLocator(const CBlockIndex *pindex) const {
     return CBlockLocator(vHave);
 }
 
-const CBlockIndex *CChain::FindFork(const CBlockIndex *pindex) const {
+const CBlockIndex* CChain::FindFork(const CBlockIndex* pindex) const
+{
     if (pindex == NULL) {
         return NULL;
     }
@@ -70,7 +74,8 @@ CBlockIndex* CChain::FindEarliestAtLeast(int64_t nTime) const
 int static inline InvertLowestOne(int n) { return n & (n - 1); }
 
 /** Compute what height to jump back to with the CBlockIndex::pskip pointer. */
-int static inline GetSkipHeight(int height) {
+int static inline GetSkipHeight(int height)
+{
     if (height < 2)
         return 0;
 
@@ -92,8 +97,8 @@ CBlockIndex* CBlockIndex::GetAncestor(int height)
         int heightSkipPrev = GetSkipHeight(heightWalk - 1);
         if (pindexWalk->pskip != NULL &&
             (heightSkip == height ||
-             (heightSkip > height && !(heightSkipPrev < heightSkip - 2 &&
-                                       heightSkipPrev >= height)))) {
+                (heightSkip > height && !(heightSkipPrev < heightSkip - 2 &&
+                                            heightSkipPrev >= height)))) {
             // Only follow pskip if pprev->pskip isn't better than pskip->pprev.
             pindexWalk = pindexWalk->pskip;
             heightWalk = heightSkip;
@@ -151,7 +156,9 @@ int64_t GetBlockProofEquivalentTime(const CBlockIndex& to, const CBlockIndex& fr
 
 const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfStake)
 {
-    while (pindex && pindex->pprev && (pindex->IsProofOfStake() != fProofOfStake))
+    while (pindex && pindex->pprev && (pindex->IsProofOfStake() != fProofOfStake)) {
         pindex = pindex->pprev;
+    }
+    
     return pindex;
 }
