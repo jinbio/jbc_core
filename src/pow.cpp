@@ -68,7 +68,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
     
     assert(pindexFirst);
 
-    return CalculateNextWorkRequired(pindexLast, pindexFirst->GetBlockTime(), params);
+    return CalculateNextWorkRequired(pindexLast, pindexFirst->GetBlockTime(), params,fProofOfStake);
 }
 
 static arith_uint256 GetTargetLimit(int64_t nTime, bool fProofOfStake, const Consensus::Params& params)
@@ -86,7 +86,7 @@ static arith_uint256 GetTargetLimit(int64_t nTime, bool fProofOfStake, const Con
 /**
 지정된 시간만큼으로 다음 난이도를 결정한다.
 **/
-unsigned int CalculateNextWorkRequired(const CBlockIndex* pindexLast, int64_t nFirstBlockTime, const Consensus::Params& params)
+unsigned int CalculateNextWorkRequired(const CBlockIndex* pindexLast, int64_t nFirstBlockTime, const Consensus::Params& params,bool fProofOfStake)
 {
     // 난이도조절을 하지 않게 했다면...
     if (params.fPowNoRetargeting){//fPowNoRetargeting = false
@@ -111,7 +111,7 @@ unsigned int CalculateNextWorkRequired(const CBlockIndex* pindexLast, int64_t nF
     bnOld = bnNew;
 
     // JBCoin: intermediate uint256 can overflow by 1 bit
-    const arith_uint256 bnPowLimit = GetTargetLimit(pindexLast->GetBlockTime(), pindexLast->IsProofOfStake(), params);
+    const arith_uint256 bnPowLimit = GetTargetLimit(pindexLast->GetBlockTime(),fProofOfStake, params);
     bool fShift = bnNew.bits() > bnPowLimit.bits() - 1;
     if (fShift){
         bnNew >>= 1;

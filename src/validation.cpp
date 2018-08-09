@@ -1522,7 +1522,7 @@ bool CheckTxInputs(const CTransaction& tx, CValidationState& state, const CCoins
         }
 
         if (nValueIn < tx.GetValueOut())
-            return state.DoS(100, false, REJECT_INVALID, "bad-txns-in-belowout", false,
+            return state.DoS(100, false, REJECT_INVALID, "bad-txns-in-belowout2", false,
                 strprintf("value in (%s) < value out (%s)", FormatMoney(nValueIn), FormatMoney(tx.GetValueOut())));
 
         // Tally transaction fees
@@ -1541,7 +1541,7 @@ bool CheckInputs(const CTransaction& tx, CValidationState &state, const CCoinsVi
     if (!tx.IsCoinBase())
     {
         if (!Consensus::CheckTxInputs(tx, state, inputs, GetSpendHeight(inputs))){
-            DbgMsg("1");
+            DbgMsg("CheckTxInputs fail ");
             return false;
         }
 
@@ -3215,9 +3215,13 @@ static bool CheckBlockSignature(const CBlock& block)//, const uint256& hash)
 
 bool CheckBlockHeader(const CBlockHeader& block, CValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW)
 {
+    
     // Check proof of work matches claimed amount
-    if (fCheckPOW && !CheckProofOfWork(block.GetPoWHash(), block.nBits, consensusParams))
-        return state.DoS(50, false, REJECT_INVALID, "high-hash", false, "proof of work failed");
+    CBlockIndex pblock = CBlockIndex(block);
+    
+    if (pblock.IsProofOfWork())
+        if (fCheckPOW && !CheckProofOfWork(block.GetPoWHash(), block.nBits, consensusParams))
+            return state.DoS(50, false, REJECT_INVALID, "high-hash", false, "proof of work failed");
 
     return true;
 }
@@ -3231,9 +3235,14 @@ bool CheckBlock(const CBlock& block, CValidationState& state, const Consensus::P
 
     // Check that the header is valid (particularly PoW).  This is mostly
     // redundant with the call in AcceptBlockHeader.
-    if (!CheckBlockHeader(block, state, consensusParams,  block.IsProofOfWork())) { 
-        DbgMsg("check fail!!!");
-        return false;
+    if(block.IsProofOfWork()){ 
+        DbgMsg("isProofOfWork.... \n%s" ,block.ToString());
+        if (!CheckBlockHeader(block, state, consensusParams,  block.IsProofOfWork())) { 
+            DbgMsg("check fail!!!");
+            return false;
+        }
+    }else{
+        DbgMsg("isStake....================>");
     }
 
     
@@ -3515,6 +3524,7 @@ static bool AcceptBlockHeader(const CBlockHeader& block, CValidationState& state
     AssertLockHeld(cs_main);
     // Check for duplicate
     uint256 hash = block.GetHash();
+    DbgMsg("여기서 오류..... high-high  ");
     BlockMap::iterator miSelf = mapBlockIndex.find(hash);
     CBlockIndex *pindex = NULL;
     if (hash != chainparams.GetConsensus().hashGenesisBlock) {
@@ -3528,8 +3538,8 @@ static bool AcceptBlockHeader(const CBlockHeader& block, CValidationState& state
                 return state.Invalid(error("%s: block %s is marked invalid", __func__, hash.ToString()), 0, "duplicate");
             return true;
         }
-
-        if (!CheckBlockHeader(block, state, chainparams.GetConsensus()))
+        DbgMsg(" 이거 진짜 오류....");
+        if (!CheckBlockHeader(block, state, chainparams.GetConsensus(),false))
             return error("%s: Consensus::CheckBlockHeader: %s, %s", __func__, hash.ToString(), FormatStateMessage(state));
 
         // Get prev block index
@@ -3562,6 +3572,7 @@ static bool AcceptBlockHeader(const CBlockHeader& block, CValidationState& state
 // Exposed wrapper for AcceptBlockHeader
 bool ProcessNewBlockHeaders(const std::vector<CBlockHeader>& headers, CValidationState& state, const CChainParams& chainparams, const CBlockIndex** ppindex)
 {
+    DbgMsg("Pro new...");
     {
         LOCK(cs_main);
         for (const CBlockHeader& header : headers) {
@@ -3588,7 +3599,7 @@ static bool AcceptBlock(const std::shared_ptr<const CBlock>& pblock, CValidation
 
     CBlockIndex *pindexDummy = NULL;
     CBlockIndex *&pindex = ppindex ? *ppindex : pindexDummy;
-
+    DbgMsg("Accept Block");
     if (!AcceptBlockHeader(block, state, chainparams, &pindex))
         return false;
 
@@ -3689,7 +3700,7 @@ bool ProcessNewBlock(const CChainParams& chainparams, const std::shared_ptr<cons
     CValidationState state; // Only used to report errors, not invalidity - ignore it
     if (!ActivateBestChain(state, chainparams, pblock))
         return error("%s: ActivateBestChain failed", __func__);
-DbgMsg("ProcessNew Block suc ========== ");
+    DbgMsg("ProcessNew Block suc ========== ");
     return true;
 }
 
