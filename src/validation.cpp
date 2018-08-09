@@ -17,6 +17,8 @@
 #include "policy/fees.h"
 #include "policy/policy.h"
 #include "pow.h"
+#include "pos.h"
+
 #include "primitives/block.h"
 #include "primitives/transaction.h"
 #include "random.h"
@@ -36,6 +38,7 @@
 #include "versionbits.h"
 #include "warnings.h"
 #include "pubkey.h"
+#include "script/interpreter.h"
 #include <atomic>
 #include <sstream>
 
@@ -504,11 +507,12 @@ bool CheckTransaction(const CTransaction& tx, CValidationState &state, bool fChe
     // Size limits (this doesn't take the witness into account, as that hasn't been checked for malleability)
     if (::GetSerializeSize(tx, SER_NETWORK, PROTOCOL_VERSION | SERIALIZE_TRANSACTION_NO_WITNESS) > MAX_BLOCK_BASE_SIZE)
         return state.DoS(100, false, REJECT_INVALID, "bad-txns-oversize");
-
     // Check for negative or overflow output values
     CAmount nValueOut = 0;
     for (const auto& txout : tx.vout)
     {
+        if (txout.IsEmpty() && !tx.IsCoinBase() && !tx.IsCoinStake())
+    	    return state.DoS(100, error("CheckTransaction(): txout empty for user transaction"));
         if (txout.nValue < 0)
             return state.DoS(100, false, REJECT_INVALID, "bad-txns-vout-negative");
         if (txout.nValue > MAX_MONEY)
@@ -517,7 +521,6 @@ bool CheckTransaction(const CTransaction& tx, CValidationState &state, bool fChe
         if (!MoneyRange(nValueOut))
             return state.DoS(100, false, REJECT_INVALID, "bad-txns-txouttotal-toolarge");
     }
-
     // Check for duplicate inputs - note that this check is slow so we skip it in CheckBlock
     if (fCheckDuplicateInputs) {
         std::set<COutPoint> vInOutPoints;
@@ -527,19 +530,24 @@ bool CheckTransaction(const CTransaction& tx, CValidationState &state, bool fChe
                 return state.DoS(100, false, REJECT_INVALID, "bad-txns-inputs-duplicate");
         }
     }
-
+    DbgMsg("chetx #3  isStake:%d isCoinBase :%d" , tx.IsCoinStake(), tx.IsCoinBase());
     if (tx.IsCoinBase())
     {
-        if (tx.vin[0].scriptSig.size() < 2 || tx.vin[0].scriptSig.size() > 100)
-            return state.DoS(100, false, REJECT_INVALID, "bad-cb-length");
+        DbgMsg("xxx");
+        if (tx.vin[0].scriptSig.size() < 2 || tx.vin[0].scriptSig.size() > 100) { 
+            DbgMsg("vin[0] size :%d , isStake:%d" ,tx.vin[0].scriptSig.size() , tx.IsCoinStake());
+            return state.DoS(100, false, REJECT_INVALID, "bad-cb-length1");
+        }
     }
     else
     {
         for (const auto& txin : tx.vin)
-            if (txin.prevout.IsNull())
+            if (txin.prevout.IsNull()) { 
+                DbgMsg("yyy");
                 return state.DoS(10, false, REJECT_INVALID, "bad-txns-prevout-null");
+            }
     }
-
+DbgMsg("chetx #4");
     return true;
 }
 
@@ -1098,6 +1106,7 @@ bool GetAddressUnspent(uint160 addressHash, int type, std::vector<std::pair<CAdd
 /** Return transaction in txOut, and if it was found inside a block, its hash is placed in hashBlock */
 bool GetTransaction(const uint256 &hash, CTransactionRef &txOut, const Consensus::Params& consensusParams, uint256 &hashBlock, bool fAllowSlow)
 {
+    DbgMsg("getTx... %s" ,hash.ToString());
     CBlockIndex *pindexSlow = NULL;
 
     LOCK(cs_main);
@@ -1111,6 +1120,7 @@ bool GetTransaction(const uint256 &hash, CTransactionRef &txOut, const Consensus
 
     if (fTxIndex) {
         CDiskTxPos postx;
+        DbgMsg("getTx %s" ,hash.ToString());
         if (pblocktree->ReadTxIndex(hash, postx)) {
             CAutoFile file(OpenBlockFile(postx, true), SER_DISK, CLIENT_VERSION);
             if (file.IsNull())
@@ -1770,6 +1780,7 @@ bool DisconnectBlock(const CBlock& block, CValidationState& state, const CBlockI
             // but it must be corrected before txout nversion ever influences a network rule.
             if (outsBlock.nVersion < 0)
                 outs->nVersion = outsBlock.nVersion;
+            DbgMsg("nTime %d %d" , outsBlock.nTime ,tx.nTime);
             if (*outs != outsBlock) { 
                 fClean = fClean && error("DisconnectBlock(): added transaction mismatch? database corrupted");
             }
@@ -1940,6 +1951,7 @@ static int64_t nTimeTotal = 0;
 bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pindex,
                   CCoinsViewCache& view, const CChainParams& chainparams, bool fJustCheck)
 {
+    DbgMsg("Connect Block.........====================================>");
     AssertLockHeld(cs_main);
 
     int64_t nTimeStart = GetTimeMicros();
@@ -3153,6 +3165,54 @@ bool FindUndoPos(CValidationState &state, int nFile, CDiskBlockPos &pos, unsigne
     return true;
 }
 
+// TODO
+static bool CheckBlockSignature(const CBlock& block)//, const uint256& hash)
+{
+    if (block.IsProofOfWork())
+        return block.vchBlockSig.empty();
+
+    if (block.vchBlockSig.empty())
+        return false;
+
+    vector<vector<unsigned char> > vSolutions;
+    txnouttype whichType;
+
+    const CTxOut& txout = block.vtx[1]->vout[1];
+
+    if (!Solver(txout.scriptPubKey, whichType, vSolutions))
+        return false;
+
+    if (whichType == TX_PUBKEY)
+    {
+        vector<unsigned char>& vchPubKey = vSolutions[0];
+        return true;
+        //return CPubKey(vchPubKey).Verify(hash, block.vchBlockSig);
+    }
+    else
+    {
+        // Block signing key also can be encoded in the nonspendable output
+        // This allows to not pollute UTXO set with useless outputs e.g. in case of multisig staking
+
+        const CScript& script = txout.scriptPubKey;
+        CScript::const_iterator pc = script.begin();
+        opcodetype opcode;
+        vector<unsigned char> vchPushValue;
+
+        if (!script.GetOp(pc, opcode, vchPushValue))
+            return false;
+        if (opcode != OP_RETURN)
+            return false;
+        if (!script.GetOp(pc, opcode, vchPushValue))
+            return false;
+        // if (!IsCompressedOrUncompressedPubKey(vchPushValue))
+        //     return false;
+        return true;
+        //return CPubKey(vchPushValue).Verify(hash, block.vchBlockSig);
+    }
+
+    return false;
+}
+
 bool CheckBlockHeader(const CBlockHeader& block, CValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW)
 {
     // Check proof of work matches claimed amount
@@ -3162,7 +3222,7 @@ bool CheckBlockHeader(const CBlockHeader& block, CValidationState& state, const 
     return true;
 }
 
-bool CheckBlock(const CBlock& block, CValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW, bool fCheckMerkleRoot)
+bool CheckBlock(const CBlock& block, CValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW, bool fCheckMerkleRoot, bool fCheckSig)
 {
     // These are checks that are independent of context.
 
@@ -3171,23 +3231,24 @@ bool CheckBlock(const CBlock& block, CValidationState& state, const Consensus::P
 
     // Check that the header is valid (particularly PoW).  This is mostly
     // redundant with the call in AcceptBlockHeader.
-    if (!CheckBlockHeader(block, state, consensusParams, fCheckPOW))
+    if (!CheckBlockHeader(block, state, consensusParams,  block.IsProofOfWork())) { 
+        DbgMsg("check fail!!!");
         return false;
+    }
 
+    
     // Check the merkle root.
     if (fCheckMerkleRoot) {
         bool mutated;
         uint256 hashMerkleRoot2 = BlockMerkleRoot(block, &mutated);
         if (block.hashMerkleRoot != hashMerkleRoot2)
             return state.DoS(100, false, REJECT_INVALID, "bad-txnmrklroot", true, "hashMerkleRoot mismatch");
-
         // Check for merkle tree malleability (CVE-2012-2459): repeating sequences
         // of transactions in a block without affecting the merkle root of a block,
         // while still invalidating it.
         if (mutated)
             return state.DoS(100, false, REJECT_INVALID, "bad-txns-duplicate", true, "duplicate transaction");
     }
-
     // All potential-corruption validation must be done before we do any
     // transaction validation, as otherwise we may mark the header as invalid
     // because we receive the wrong transactions for it.
@@ -3197,19 +3258,54 @@ bool CheckBlock(const CBlock& block, CValidationState& state, const Consensus::P
     // Size limits
     if (block.vtx.empty() || block.vtx.size() > MAX_BLOCK_BASE_SIZE || ::GetSerializeSize(block, SER_NETWORK, PROTOCOL_VERSION | SERIALIZE_TRANSACTION_NO_WITNESS) > MAX_BLOCK_BASE_SIZE)
         return state.DoS(100, false, REJECT_INVALID, "bad-blk-length", false, "size limits failed");
-
+    
     // First transaction must be coinbase, the rest must not be
     if (block.vtx.empty() || !block.vtx[0]->IsCoinBase())
         return state.DoS(100, false, REJECT_INVALID, "bad-cb-missing", false, "first tx is not coinbase");
+
     for (unsigned int i = 1; i < block.vtx.size(); i++)
         if (block.vtx[i]->IsCoinBase())
             return state.DoS(100, false, REJECT_INVALID, "bad-cb-multiple", false, "more than one coinbase");
+    
+     // Check coinstake timestamp
+    if (block.IsProofOfStake() && !CheckCoinStakeTimestamp(block.GetBlockTime(), block.vtx[1]->nTime))
+            return state.DoS(50, error("CheckBlock(): coinstake timestamp violation nTimeBlock=%d nTimeTx=%u", block.GetBlockTime(), block.vtx[1]->nTime),
+            		REJECT_INVALID, "bad-cs-time");
+    
+    if (block.IsProofOfStake())
+    {
+        // Coinbase output must be empty if proof-of-stake block
+        if (block.vtx[0]->vout.size() != 1 || !block.vtx[0]->vout[0].IsEmpty())
+            return state.DoS(100, error("CheckBlock(): coinbase output not empty for proof-of-stake block"),
+                                REJECT_INVALID, "bad-cb-not-empty");
 
+        // Second transaction must be coinstake, the rest must not be
+        if (block.vtx.size() < 2 || !block.vtx[1]->IsCoinStake())
+            return state.DoS(100, error("CheckBlock(): second tx is not coinstake"),
+                                REJECT_INVALID, "bad-cs-missing");
+        for (unsigned int i = 2; i < block.vtx.size(); i++)
+            if (block.vtx[i]->IsCoinStake())
+                return state.DoS(100, error("CheckBlock(): more than one coinstake"),
+                                    REJECT_INVALID, "bad-cs-multiple");
+    }
+  // Check proof-of-stake block signature
+    if (fCheckSig && !CheckBlockSignature(block ))
+            return state.DoS(100, error("CheckBlock(): bad proof-of-stake block signature"),
+            		REJECT_INVALID, "bad-block-signature");
     // Check transactions
-    for (const auto& tx : block.vtx)
-        if (!CheckTransaction(*tx, state, false))
+    int idx =0;
+    for (const auto& tx : block.vtx) { 
+        
+        if (!CheckTransaction(*tx, state, false)) {
+            DbgMsg("Check Tx fail... :%d  \n%s " ,idx, tx->ToString());
+            DbgMsg(" fail block \n%s" ,block.ToString());
             return state.Invalid(false, state.GetRejectCode(), state.GetRejectReason(),
                                  strprintf("Transaction check failed (tx hash %s) %s", tx->GetHash().ToString(), state.GetDebugMessage()));
+        }else{
+            DbgMsg("Check Tx Suc :%d" , idx);
+        }
+        idx++;
+    }
 
     unsigned int nSigOps = 0;
     for (const auto& tx : block.vtx)
@@ -3218,10 +3314,8 @@ bool CheckBlock(const CBlock& block, CValidationState& state, const Consensus::P
     }
     if (nSigOps * WITNESS_SCALE_FACTOR > MAX_BLOCK_SIGOPS_COST)
         return state.DoS(100, false, REJECT_INVALID, "bad-blk-sigops", false, "out-of-bounds SigOpCount");
-
     if (fCheckPOW && fCheckMerkleRoot)
         block.fChecked = true;
-
     return true;
 }
 
@@ -3307,7 +3401,9 @@ bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationState& sta
     // Check proof of work
     // TODO pos 블럭인지 , pow 블럭인지 헤더를 봐서는 알수 
     if (block.nBits != GetNextWorkRequired(pindexPrev, &block, false,consensusParams)) { 
-        return state.DoS(100, false, REJECT_INVALID, "bad-diffbits", false, "incorrect proof of work");
+        if (block.nBits != GetNextWorkRequired(pindexPrev, &block, true,consensusParams)) { // check twice , may pos
+            return state.DoS(100, false, REJECT_INVALID, "bad-diffbits", false, "incorrect proof of work");
+        }
     }
 
     // Check timestamp against prev
@@ -3571,7 +3667,10 @@ bool ProcessNewBlock(const CChainParams& chainparams, const std::shared_ptr<cons
         // Ensure that CheckBlock() passes before calling AcceptBlock, as
         // belt-and-suspenders.
         bool ret = CheckBlock(*pblock, state, chainparams.GetConsensus());
-
+        if( !ret ){
+            DbgMsg("CheckBlock Fail....");
+            return error("%s: CheckBlock FAILED ", __func__);
+        }
         LOCK(cs_main);
 
         if (ret) {
@@ -3590,7 +3689,7 @@ bool ProcessNewBlock(const CChainParams& chainparams, const std::shared_ptr<cons
     CValidationState state; // Only used to report errors, not invalidity - ignore it
     if (!ActivateBestChain(state, chainparams, pblock))
         return error("%s: ActivateBestChain failed", __func__);
-
+DbgMsg("ProcessNew Block suc ========== ");
     return true;
 }
 
@@ -4011,8 +4110,6 @@ bool CVerifyDB::VerifyDB(const CChainParams& chainparams, CCoinsView *coinsview,
             }
         }
         // check level 3: check for inconsistencies during memory-only disconnect of tip blocks
-        DbgMsg("xxxxxxxx   %d %d %d ,%d" ,coins.DynamicMemoryUsage() , pcoinsTip->DynamicMemoryUsage() , nCoinCacheUsage ,pindex == pindexState);
-        DbgMsg("xx \n\t%s \n\t%s" , pindexState->ToString(),pindex->ToString() );
         if (nCheckLevel >= 3 && pindex == pindexState && (coins.DynamicMemoryUsage() + pcoinsTip->DynamicMemoryUsage()) <= nCoinCacheUsage) {
             bool fClean = true;
             if (!DisconnectBlock(block, state, pindex, coins, &fClean))
@@ -4696,52 +4793,6 @@ public:
     }
 } instance_of_cmaincleanup;
 
-
-
-static bool CheckBlockSignature(const CBlock& block, const uint256& hash)
-{
-    if (block.IsProofOfWork())
-        return block.vchBlockSig.empty();
-
-    if (block.vchBlockSig.empty())
-        return false;
-
-    vector<vector<unsigned char> > vSolutions;
-    txnouttype whichType;
-
-    const CTxOut& txout = block.vtx[1]->vout[1];
-
-    if (!Solver(txout.scriptPubKey, whichType, vSolutions))
-        return false;
-
-    if (whichType == TX_PUBKEY)
-    {
-        vector<unsigned char>& vchPubKey = vSolutions[0];
-        return CPubKey(vchPubKey).Verify(hash, block.vchBlockSig);
-    }
-    else
-    {
-        // Block signing key also can be encoded in the nonspendable output
-        // This allows to not pollute UTXO set with useless outputs e.g. in case of multisig staking
-
-        const CScript& script = txout.scriptPubKey;
-        CScript::const_iterator pc = script.begin();
-        opcodetype opcode;
-        vector<unsigned char> vchPushValue;
-
-        if (!script.GetOp(pc, opcode, vchPushValue))
-            return false;
-        if (opcode != OP_RETURN)
-            return false;
-        if (!script.GetOp(pc, opcode, vchPushValue))
-            return false;
-        if (!IsCompressedOrUncompressedPubKey(vchPushValue))
-            return false;
-        return CPubKey(vchPushValue).Verify(hash, block.vchBlockSig);
-    }
-
-    return false;
-}
 
 
 // ppcoin: total coin age spent in transaction, in the unit of coin-days.

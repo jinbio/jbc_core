@@ -29,8 +29,14 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
     
     if (pblock->GetBlockTime() > pindexLast->GetBlockTime() + params.nPowTargetSpacing*5){//1min *5 no block, will reset difficulty
         if(fDebug){ 
-            LogPrint("mine", "%d too old net... gap:%s sec, new:%08x , prev:%08x \n" ,pindexLast->nHeight,
-                pblock->GetBlockTime() - pindexLast->GetBlockTime() , nProofOfWorkLimit,pindexLast->nBits );
+            DbgMsg("targetspace :%d curTime:%d prevTime:%d " , 
+                params.nPowTargetSpacing ,
+                pblock->GetBlockTime() ,
+                pindexLast->GetBlockTime() );
+            LogPrint("mine", "%d height too old net... gap:%s sec, new:%08x , prev:%08x \n" ,
+                pindexLast->nHeight,
+                pblock->GetBlockTime() - pindexLast->GetBlockTime() , 
+                nProofOfWorkLimit,pindexLast->nBits );
         }
         return nProofOfWorkLimit;
     }
@@ -132,7 +138,7 @@ bool CheckProofOfWork(uint256 hash, unsigned int nBits, const Consensus::Params&
 
     // Check range
     if (fNegative || bnTarget == 0 || fOverflow || bnTarget > UintToArith256(params.powLimit)){
-        // DbgMsg("fail1");
+        DbgMsg("fail1 target:%s limit:%s" , bnTarget.ToString(),params.powLimit.ToString());
         return false;
     }
 

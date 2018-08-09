@@ -111,8 +111,15 @@ UniValue generateBlocks(boost::shared_ptr<CReserveScript> coinbaseScript, int nG
     }
     unsigned int nExtraNonce = 0;
     UniValue blockHashes(UniValue::VARR);
+    bool foundSleep = false;
     while (nHeight < nHeightEnd)
     {
+        if(foundSleep){
+            DbgMsg("found and sleep ....");
+            sleep(21);//for early block...
+            foundSleep = false;
+            DbgMsg("start......");
+        }
         std::unique_ptr<CBlockTemplate> pblocktemplate(BlockAssembler(Params()).CreateNewBlock(coinbaseScript->reserveScript));
         if (!pblocktemplate.get())
             throw JSONRPCError(RPC_INTERNAL_ERROR, "Couldn't create new block");
@@ -138,6 +145,10 @@ UniValue generateBlocks(boost::shared_ptr<CReserveScript> coinbaseScript, int nG
         std::shared_ptr<const CBlock> shared_pblock = std::make_shared<const CBlock>(*pblock);
         if (!ProcessNewBlock(Params(), shared_pblock, true, NULL))
             throw JSONRPCError(RPC_INTERNAL_ERROR, "ProcessNewBlock, block not accepted");
+        else{
+            LogPrintf("yeh!!! \n");
+            foundSleep = true;
+        }
         ++nHeight;
         blockHashes.push_back(pblock->GetHash().GetHex());
 
