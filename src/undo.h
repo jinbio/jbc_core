@@ -31,7 +31,7 @@ public:
     template <typename Stream>
     void Serialize(Stream& s) const
     {
-        ::Serialize(s, VARINT(nHeight * 2 + (fCoinBase ? 1 : 0) + (fCoinStake ? 2 : 0)));
+        ::Serialize(s, VARINT(nHeight * 4 + (fCoinBase ? 1 : 0) + (fCoinStake ? 2 : 0)));
         if (nHeight > 0)
             ::Serialize(s, VARINT(this->nVersion));
         ::Serialize(s, this->nTime);
@@ -43,7 +43,7 @@ public:
     {
         unsigned int nCode = 0;
         ::Unserialize(s, VARINT(nCode));
-        nHeight = nCode / 2;
+        nHeight = nCode / 4;
         fCoinBase = nCode & 1;
         fCoinStake = nCode & 2;
         if (nHeight > 0)

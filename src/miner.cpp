@@ -49,7 +49,7 @@ uint64_t nLastBlockSize = 0;
 uint64_t nLastBlockWeight = 0;
 int64_t nLastCoinStakeSearchInterval = 0;
 
-unsigned int nMinerSleep = 500;
+unsigned int nMinerSleep = 5000;
 static bool ProcessBlockFound(const CBlock* pblock, const CChainParams& chainparams, const uint256& hash);
 class ScoreCompare
 {
@@ -226,6 +226,7 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     CValidationState state;
     DbgMsg("check test!!!  %d" , pblock->IsProofOfStake());
     if (!fProofOfStake &&!TestBlockValidity(state, chainparams, *pblock, pindexPrev, false, false)) {
+        DbgMsg("not stake");
         throw std::runtime_error(strprintf("%s: TestBlockValidity failed: %s", __func__, FormatStateMessage(state)));
     }
     int64_t nTime2 = GetTimeMicros();
@@ -830,7 +831,6 @@ bool CheckStake(CBlock* pblock, CWallet& wallet, const CChainParams& chainparams
 
 static bool ProcessBlockFound(const CBlock* pblock, const CChainParams& chainparams, const uint256& hash)
 {
-    LogPrintf("is Stake:%d \n %s\n",pblock->IsProofOfStake(), pblock->ToString());
     LogPrintf("generated %s\n", FormatMoney(pblock->vtx[0]->vout[0].nValue));
 
     // Found a solution
@@ -847,9 +847,7 @@ static bool ProcessBlockFound(const CBlock* pblock, const CChainParams& chainpar
     // CValidationState state;
     std::shared_ptr<const CBlock> shared_pblock = std::make_shared<const CBlock>(*pblock);
 
-LogPrintf("shared Stake:%d \n %s\n",shared_pblock->IsProofOfStake(), shared_pblock->ToString());
     
-
     if (!ProcessNewBlock(Params(), shared_pblock, true, NULL)){ 
          return error("BitcoinMiner: ProcessNewBlock, block not accepted");
     }

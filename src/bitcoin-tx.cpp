@@ -25,7 +25,7 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/assign/list_of.hpp>
-
+using namespace std;
 static bool fCreateBlank;
 static std::map<std::string,UniValue> registers;
 static const int CONTINUE_EXECUTION=-1;
@@ -201,7 +201,14 @@ static void MutateTxLocktime(CMutableTransaction& tx, const std::string& cmdVal)
 
     tx.nLockTime = (unsigned int) newLocktime;
 }
+static void MutateTxTime(CMutableTransaction& tx, const string& cmdVal)
+{
+    int64_t newTime = atoi64(cmdVal);
+    if (newTime < 0LL || newTime > 0xffffffffLL)
+        throw runtime_error("Invalid TX time requested");
 
+    tx.nTime = (unsigned int) newTime;
+}
 static void MutateTxAddInput(CMutableTransaction& tx, const std::string& strInput)
 {
     std::vector<std::string> vStrInputParts;
@@ -663,7 +670,9 @@ static void MutateTx(CMutableTransaction& tx, const std::string& command,
         MutateTxVersion(tx, commandVal);
     else if (command == "locktime")
         MutateTxLocktime(tx, commandVal);
-
+    else if (command == "time")
+        MutateTxTime(tx, commandVal);
+    
     else if (command == "delin")
         MutateTxDelInput(tx, commandVal);
     else if (command == "in")

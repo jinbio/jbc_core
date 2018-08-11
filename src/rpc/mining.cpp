@@ -112,14 +112,15 @@ UniValue generateBlocks(boost::shared_ptr<CReserveScript> coinbaseScript, int nG
     unsigned int nExtraNonce = 0;
     UniValue blockHashes(UniValue::VARR);
     bool foundSleep = false;
+    DbgMsg("Start gente========================");
     while (nHeight < nHeightEnd)
     {
-        if(foundSleep){
-            DbgMsg("found and sleep ....");
-            sleep(21);//for early block...
-            foundSleep = false;
-            DbgMsg("start......");
-        }
+        // if(foundSleep){
+        //     DbgMsg("found and sleep ....");
+        //     sleep(21);//for early block...
+        //     foundSleep = false;
+        //     DbgMsg("start......");
+        // }
         std::unique_ptr<CBlockTemplate> pblocktemplate(BlockAssembler(Params()).CreateNewBlock(coinbaseScript->reserveScript));
         if (!pblocktemplate.get())
             throw JSONRPCError(RPC_INTERNAL_ERROR, "Couldn't create new block");
@@ -128,7 +129,7 @@ UniValue generateBlocks(boost::shared_ptr<CReserveScript> coinbaseScript, int nG
             LOCK(cs_main);
             IncrementExtraNonce(pblock, chainActive.Tip(), nExtraNonce);
         }
-        
+        DbgMsg("=-============================== > ");
         while (nMaxTries > 0 && pblock->nNonce < nInnerLoopCount && !CheckProofOfWork(pblock->GetPoWHash(), pblock->nBits, Params().GetConsensus())) {
             if(nMaxTries%10000==0){
                 DbgMsg("Search %u \n%s" ,nMaxTries,pblock->ToString() );
@@ -136,6 +137,7 @@ UniValue generateBlocks(boost::shared_ptr<CReserveScript> coinbaseScript, int nG
             ++pblock->nNonce;
             --nMaxTries;
         }
+        DbgMsg("found pow block %s" , pblock->GetPoWHash().ToString());
         if (nMaxTries == 0) {
             break;
         }

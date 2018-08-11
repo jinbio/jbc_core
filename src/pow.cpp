@@ -41,7 +41,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         return nProofOfWorkLimit;
     }
     //too fast
-    if (pblock->GetBlockTime() <  ( pindexLast->GetBlockTime() +  params.nPowTargetSpacing/3)){
+    if (pblock->GetBlockTime() <  ( pindexLast->GetBlockTime() +  params.nPowTargetSpacing/3)&& pindexLast->nHeight >10000){
         unsigned int ret =pindexLast->nBits / 2;
         if(fDebug)
             LogPrint("mine", "prevhieght:%d too fast block %08x\n ",pindexLast->nHeight, ret);
@@ -144,7 +144,6 @@ bool CheckProofOfWork(uint256 hash, unsigned int nBits, const Consensus::Params&
 
     // Check proof of work matches claimed amount
     if (UintToArith256(hash) > bnTarget){ 
-       // DbgMsg("fail2 hash:%s, target:%s" ,hash.ToString(), bnTarget.ToString() );
         return false;
     }
 
