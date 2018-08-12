@@ -773,6 +773,7 @@ void ThreadStakeMiner(CWallet *pwallet, const CChainParams& chainparams)
         // Create new block
         //
         int64_t nFees;//TODO fee 를 설정해야 한다.
+        DbgMsg("START ######## =================== STAKE ==== >");
         std::unique_ptr<CBlockTemplate> pblocktemplate(BlockAssembler(Params()).CreateNewBlock( reservekey.reserveScript,true,true));
         //std::unique_ptr<CBlockTemplate> pblocktemplate(CreateNewBlock(chainparams, reservekey.reserveScript, &nFees, true));
         if (!pblocktemplate.get())
@@ -784,11 +785,14 @@ void ThreadStakeMiner(CWallet *pwallet, const CChainParams& chainparams)
         {
             SetThreadPriority(THREAD_PRIORITY_NORMAL);
             CheckStake(pblock, *pwallet, chainparams);
+            DbgMsg("EDN ######## found =================== STAKE ==== >");
             SetThreadPriority(THREAD_PRIORITY_LOWEST);
-            MilliSleep(500);
+            MilliSleep(nMinerSleep * 10);
         }
-        else
-            MilliSleep(nMinerSleep);
+        else { 
+            DbgMsg("EDN ######## found fail =================== STAKE ==== >");
+            MilliSleep(nMinerSleep );
+        }
     }
 }
 

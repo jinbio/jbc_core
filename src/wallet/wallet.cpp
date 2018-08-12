@@ -2427,7 +2427,7 @@ bool CWallet::CreateTransaction(const vector<CRecipient>& vecSend, CWalletTx& wt
     // now we ensure code won't be written that makes assumptions about
     // nLockTime that preclude a fix later.
     txNew.nLockTime = chainActive.Height();
-
+    txNew.nTime = GetAdjustedTime();
     // Secondly occasionally randomly pick a nLockTime even further back, so
     // that transactions that are delayed after signing for whatever reason,
     // e.g. high-latency mix networks and some CoinJoin implementations, have
@@ -4002,7 +4002,7 @@ void CWallet::AvailableCoinsForStaking(std::vector<COutput>& vCoins) const
             if (nDepth < 1)
                 continue;
 
-			if (nDepth < Params().GetConsensus().nStakeMinConfirmations)
+			if (nDepth < STAKE_MIN_CONFIRMATIONS)
 				continue;
 
             if (pcoin->GetBlocksToMaturity() > 0)
@@ -4086,7 +4086,7 @@ uint64_t CWallet::GetStakeWeight() const
     LOCK2(cs_main, cs_wallet);
     BOOST_FOREACH(PAIRTYPE(const CWalletTx*, unsigned int) pcoin, setCoins)
     {
-		if (pcoin.first->GetDepthInMainChain() >= Params().GetConsensus().nStakeMinConfirmations)
+		if (pcoin.first->GetDepthInMainChain() >=STAKE_MIN_CONFIRMATIONS)
 			nWeight += pcoin.first->tx->vout[pcoin.second].nValue;
     }
 

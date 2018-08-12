@@ -15,7 +15,7 @@
 #include "util.h"
 #include "validation.h"
 #include <stdio.h>
-
+#include "consensus/consensus.h"
 
 // Stake Modifier (hash modifier of proof-of-stake):
 // The purpose of stake modifier is to prevent a txout (coin) owner from
@@ -129,7 +129,7 @@ bool CheckProofOfStake(CBlockIndex* pindexPrev, const CTransaction& tx, unsigned
 
     // Min age requirement
     int nDepth;
-    if (IsConfirmedInNPrevBlocks(txindex, pindexPrev, Params().GetConsensus().nStakeMinConfirmations - 1, nDepth))
+    if (IsConfirmedInNPrevBlocks(txindex, pindexPrev, STAKE_MIN_CONFIRMATIONS - 1, nDepth))
         return state.DoS(100, error("CheckProofOfStake() : tried to stake at depth %d", nDepth + 1));
 
     if (!CheckStakeKernelHash(pindexPrev, nBits, new CCoins(txPrev, pindexPrev->nHeight), txin.prevout, tx.nTime))
@@ -176,7 +176,7 @@ bool CheckKernel(CBlockIndex* pindexPrev, unsigned int nBits, uint32_t nTime, co
             return false;
 
         int nDepth;
-        if (IsConfirmedInNPrevBlocks(txindex, pindexPrev, Params().GetConsensus().nStakeMinConfirmations - 1, nDepth))
+        if (IsConfirmedInNPrevBlocks(txindex, pindexPrev,STAKE_MIN_CONFIRMATIONS - 1, nDepth))
             return false;
 
         if (pBlockTime)

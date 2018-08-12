@@ -66,8 +66,8 @@ struct Params {
     uint256 defaultAssumeValid;
     /** pos **/
     int nStakeTimestampMask;
-    int nCoinbaseMaturity;
-    int nStakeMinConfirmations;
+    
+    
     unsigned int nStakeMinAge;
     uint256 posLimit;
     

@@ -1129,9 +1129,8 @@ public:
         // Serialize nVersion
         ::Serialize(s, txTo.nVersion);
         // Serialize nTime
-#if TX_TIMESTAMP == 1     
+
         ::Serialize(s, txTo.nTime);
-#endif
 
         // Serialize vin
         unsigned int nInputs = fAnyoneCanPay ? 1 : txTo.vin.size();
@@ -1209,9 +1208,7 @@ uint256 SignatureHash(const CScript& scriptCode, const CTransaction& txTo, unsig
         // Version
         ss << txTo.nVersion;
         // nTime for POS
-#if TX_TIMESTAMP == 1
         ss << txTo.nTime;//
-#endif        
         // Input prevouts/nSequence (none/all, depending on flags)
         ss << hashPrevouts;
         ss << hashSequence;

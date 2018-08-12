@@ -1516,9 +1516,11 @@ bool CheckTxInputs(const CTransaction& tx, CValidationState& state, const CCoins
                     strprintf("tried to spend coinbase at depth %d", nSpendHeight - coins->nHeight));
         }
         // Check transaction timestamp
-        if (coins->nTime > tx.nTime)
-                return state.DoS(100, error("CheckInputs() : transaction timestamp earlier than input transaction"),
-                            REJECT_INVALID, "bad-txns-time-earlier-than-input");
+        if (coins->nTime > tx.nTime) { 
+            DbgMsg("coin nTime :%d txtime:%d" , coins->nTime, tx.nTime);
+            return state.DoS(100, error("CheckInputs() : transaction timestamp earlier than input transaction"),
+                        REJECT_INVALID, "bad-txns-time-earlier-than-input");
+        }
         // Check for negative or overflow input values
         nValueIn += coins->vout[prevout.n].nValue;
         if (!MoneyRange(coins->vout[prevout.n].nValue) || !MoneyRange(nValueIn))
@@ -1789,19 +1791,7 @@ bool DisconnectBlock(const CBlock& block, CValidationState& state, const CBlockI
             // but it must be corrected before txout nversion ever influences a network rule.
             if (outsBlock.nVersion < 0)
                 outs->nVersion = outsBlock.nVersion;
-            DbgMsg("nTime %d %d" , outsBlock.nTime ,tx.nTime);
             if (*outs != outsBlock) { 
-                DbgMsg("Block \n%s" ,block.ToString());
-                DbgMsg( "%d %d %d %d %d ", outs->fCoinBase,
-                    outs->fCoinStake ,
-                    outs->nHeight ,
-                    outs->nVersion ,
-                    outs->nTime );
-                DbgMsg( "%d %d %d %d %d " ,outsBlock.fCoinBase,
-                    outsBlock.fCoinStake ,
-                    outsBlock.nHeight ,
-                   outsBlock.nVersion ,
-                    outsBlock.nTime );
                 fClean = fClean && error("DisconnectBlock(): added transaction mismatch? database corrupted");
             }
             // remove outputs
@@ -2004,7 +1994,7 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
                                 REJECT_INVALID, "bad-cs-kernel");
 
         // Check proof-of-stake min confirmations
-         if (pindex->nHeight - coins->nHeight < chainparams.GetConsensus().nStakeMinConfirmations)
+         if (pindex->nHeight - coins->nHeight < STAKE_MIN_CONFIRMATIONS)
               return state.DoS(100,
                   error("%s: tried to stake at depth %d", __func__, pindex->nHeight - coins->nHeight),
                     REJECT_INVALID, "bad-cs-premature");
