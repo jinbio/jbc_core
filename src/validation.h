@@ -1063,4 +1063,8 @@ void DumpMempool();
 /** Load the mempool from disk. */
 bool LoadMempool();
 
+bool TransactionGetCoinAge(CTransaction& transaction, uint64_t& nCoinAge);
+// int64_t GetProofOfStakeReward(int nHeight, int64_t nCoinAge, int64_t nFees, CBlockIndex* pindexPrev);
+int64_t GetProofOfStakeReward(const CBlockIndex* pindexPrev, int64_t nCoinAge, int64_t nFees);
+
 #endif // BITCOIN_VALIDATION_H

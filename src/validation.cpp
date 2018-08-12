@@ -1975,7 +1975,7 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     AssertLockHeld(cs_main);
 
     int64_t nTimeStart = GetTimeMicros();
-
+    CAmount nStakeReward = 0;
     // Check it again in case a previous version let a bad block in
     if (!CheckBlock(block, state, chainparams.GetConsensus(), !fJustCheck, !fJustCheck))
         return error("%s: Consensus::CheckBlock: %s", __func__, FormatStateMessage(state));
@@ -2209,9 +2209,13 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
         txdata.emplace_back(tx);
         if (!tx.IsCoinBase())
         {
-            nFees += view.GetValueIn(tx)-tx.GetValueOut();
-
-                       std::vector<CScriptCheck> vChecks;
+            if (!tx.IsCoinStake())
+                nFees += view.GetValueIn(tx)-tx.GetValueOut();
+            if (tx.IsCoinStake())
+            {
+                nStakeReward = tx.GetValueOut() - view.GetValueIn(tx);
+            }   
+            std::vector<CScriptCheck> vChecks;
             bool fCacheResults = fJustCheck; /* Don't cache results if we're actually connecting blocks (still consult the cache, though) */
             if (!CheckInputs(tx, state, view, fScriptChecks, flags, fCacheResults, txdata[i], nScriptCheckThreads ? &vChecks : NULL))
                 return error("ConnectBlock(): CheckInputs on %s failed with %s",
@@ -2267,18 +2271,33 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     int64_t nTime3 = GetTimeMicros(); nTimeConnect += nTime3 - nTime2;
     LogPrint("bench", "      - Connect %u transactions: %.2fms (%.3fms/tx, %.3fms/txin) [%.2fs]\n", (unsigned)block.vtx.size(), 0.001 * (nTime3 - nTime2), 0.001 * (nTime3 - nTime2) / block.vtx.size(), nInputs <= 1 ? 0 : 0.001 * (nTime3 - nTime2) / (nInputs-1), nTimeConnect * 0.000001);
 
-    CAmount blockReward = nFees + GetBlockSubsidy(pindex->pprev, chainparams.GetConsensus());
-    if (block.vtx[0]->GetValueOut() > blockReward)
-        return state.DoS(100,
-                         error("ConnectBlock(): coinbase pays too much (actual=%d vs limit=%d)",
-                               block.vtx[0]->GetValueOut(), blockReward),
-                               REJECT_INVALID, "bad-cb-amount");
+    if (block.IsProofOfWork())
+    {
+        CAmount blockReward = nFees + GetBlockSubsidy(pindex->pprev, chainparams.GetConsensus());
+        if (block.vtx[0]->GetValueOut() > blockReward)
+            return state.DoS(100,
+                            error("ConnectBlock(): coinbase pays too much (actual=%d vs limit=%d)",
+                                block.vtx[0]->GetValueOut(), blockReward),
+                                REJECT_INVALID, "bad-cb-amount");
+        pindex->nMoneySupply = (pindex->pprev? pindex->pprev->nMoneySupply : 0) + ( blockReward<0?0:blockReward -nFees)  ;                        
+    }else if (block.IsProofOfStake())
+    {
+        // ppcoin: coin stake tx earns reward instead of paying fee
+        uint64_t nCoinAge;
+        if (!TransactionGetCoinAge(const_cast<CTransaction&>(*block.vtx[1]), nCoinAge))
+            return error("ConnectBlock() : %s unable to get coin age for coinstake", block.vtx[1]->GetHash().ToString());
 
-    if (!control.Wait())
-        return state.DoS(100, false);
+        int64_t nCalculatedStakeReward = GetProofOfStakeReward( pindex->pprev,nCoinAge, nFees);
+
+        if (nStakeReward > nCalculatedStakeReward)
+            return state.DoS(100, error("ConnectBlock() : coinstake pays too much(actual=%d vs calculated=%d)", nStakeReward, nCalculatedStakeReward));
+        pindex->nMoneySupply = (pindex->pprev? pindex->pprev->nMoneySupply : 0) + ( nStakeReward<0?0:nStakeReward -nFees)  ;            
+    }
+    if (!control.Wait()){}
+        // return state.DoS(100, false);
     int64_t nTime4 = GetTimeMicros(); nTimeVerify += nTime4 - nTime2;
     LogPrint("bench", "    - Verify %u txins: %.2fms (%.3fms/txin) [%.2fs]\n", nInputs - 1, 0.001 * (nTime4 - nTime2), nInputs <= 1 ? 0 : 0.001 * (nTime4 - nTime2) / (nInputs-1), nTimeVerify * 0.000001);
-    pindex->nMoneySupply = (pindex->pprev? pindex->pprev->nMoneySupply : 0) + ( blockReward<0?0:blockReward -nFees)  ;
+    
     
     //pindex->nMoneySupply = ( ( BLOCK_HEIGHT_INIT * 14000000 ) + (50 * pindex->nHeight) ) * COIN; 
     // DbgMsg("moneySupply prev:%u :%u  ,%d " , pindex->pprev->nMoneySupply, (pindex->pprev? pindex->pprev->nMoneySupply : 0) + nValueOut , nValueOut );
@@ -4897,5 +4916,48 @@ bool GetCoinAge(const CTransaction& tx, CBlockTreeDB& txdb, const CBlockIndex* p
     arith_uint256 bnCoinDay = bnCentSecond * CENT / COIN / (24 * 60 * 60);
     LogPrint("coinage", "coin age bnCoinDay=%s\n", bnCoinDay.ToString());
     nCoinAge = bnCoinDay.GetLow64();
+    return true;
+}
+
+bool TransactionGetCoinAge(CTransaction& transaction, uint64_t& nCoinAge)
+{
+    arith_uint256 bnCentSecond = 0;  // coin age in the unit of cent-seconds
+    nCoinAge = 0;
+
+    if (transaction.IsCoinBase())
+        return true;
+
+    BOOST_FOREACH(const CTxIn& txin, transaction.vin)
+    {
+        // First try finding the previous transaction in database
+        CTransactionRef txPrev;
+        uint256 hashBlock = uint256();
+
+        if (!GetTransaction(txin.prevout.hash, txPrev, Params().GetConsensus(), hashBlock, true))
+            continue;  // previous transaction not in main chain
+
+        if (transaction.nTime < txPrev->nTime)
+            return false;  // Transaction timestamp violation
+
+        if (mapBlockIndex.count(hashBlock) == 0)
+            return false; //Block not found
+
+        CBlockIndex* pblockindex = mapBlockIndex[hashBlock];
+
+        if (pblockindex->nTime + Params().GetConsensus().nStakeMinAge > transaction.nTime)
+            continue; // only count coins meeting min age requirement
+
+        int64_t nValueIn = txPrev->vout[txin.prevout.n].nValue;
+        bnCentSecond += arith_uint256(nValueIn) * (transaction.nTime-txPrev->nTime) / CENT;
+
+
+        LogPrint("coinage", "coin age nValueIn=%d nTimeDiff=%d bnCentSecond=%s\n", nValueIn, transaction.nTime - txPrev->nTime, bnCentSecond.ToString());
+    }
+
+
+    arith_uint256 bnCoinDay = ((bnCentSecond * CENT) / COIN) / (24 * 60 * 60);
+    LogPrint("coinage", "coin age bnCoinDay=%s\n", bnCoinDay.ToString());
+    nCoinAge = bnCoinDay.GetLow64();
+
     return true;
 }
