@@ -23,6 +23,18 @@ uint256 CBlockHeader::GetPoWHash() const
     return thash;
 }
 
+std::string CBlockHeader::ToString() const
+{
+    std::stringstream s;
+    s << strprintf("CBlockHeader(hash=%s, ver=0x%08x, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%08x, nNonce=%u)\n",
+        GetHash().ToString(),
+        nVersion,
+        hashPrevBlock.ToString(),
+        hashMerkleRoot.ToString(),
+        nTime, nBits, nNonce);
+    
+    return s.str();
+}
 std::string CBlock::ToString() const
 {
     std::stringstream s;
