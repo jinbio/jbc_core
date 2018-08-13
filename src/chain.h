@@ -14,6 +14,9 @@
 #include "utilmoneystr.h"
 #include <vector>
 
+#define BLOCK_PROOF_OF_STAKE 0x01 // is proof-of-stake block
+#define BLOCK_STAKE_ENTROPY  0x02 // entropy bit for stake modifier
+#define BLOCK_STAKE_MODIFIER 0x04
 class CBlockFileInfo
 {
 public:
@@ -188,6 +191,9 @@ public:
     //! This value will be non-zero only if and only if transactions for this block and all its parents are available.
     //! Change to 64-bit type when necessary; won't happen before 2030
     unsigned int nChainTx;
+    //! hash modifier of proof-of-stake
+    uint256 nStakeModifier;
+    unsigned int nFlags;  // ppcoin: block index flags
     int64_t nMoneySupply;
     //! Verification status of this block. See enum BlockStatus
     unsigned int nStatus;
@@ -228,6 +234,8 @@ public:
         nNonce         = 0;
 
         nMoneySupply = 0;
+        nStakeModifier = uint256();
+        nFlags = 0;
     }
 
     CBlockIndex()
@@ -238,6 +246,21 @@ public:
     CBlockIndex(const CBlockHeader& block)
     {
         SetNull();
+
+        nVersion       = block.nVersion;
+        hashMerkleRoot = block.hashMerkleRoot;
+        nTime          = block.nTime;
+        nBits          = block.nBits;
+        nNonce         = block.nNonce;
+    }
+    CBlockIndex(const CBlock& block)
+    {
+        SetNull();
+
+        if (block.IsProofOfStake())
+        {
+            SetProofOfStake();
+        }
 
         nVersion       = block.nVersion;
         hashMerkleRoot = block.hashMerkleRoot;
@@ -351,6 +374,20 @@ public:
     //! Efficiently find an ancestor of this block.
     CBlockIndex* GetAncestor(int height);
     const CBlockIndex* GetAncestor(int height) const;
+    bool IsProofOfWork() const
+    {
+        return !(nFlags & BLOCK_PROOF_OF_STAKE);
+    }
+
+    bool IsProofOfStake() const
+    {
+        return (nFlags & BLOCK_PROOF_OF_STAKE);
+    }
+
+    void SetProofOfStake()
+    {
+        nFlags |= BLOCK_PROOF_OF_STAKE;
+    }
 };
 
 arith_uint256 GetBlockProof(const CBlockIndex& block);
@@ -381,6 +418,7 @@ public:
 
         READWRITE(VARINT(nHeight));
         READWRITE(VARINT(nStatus));
+        
         READWRITE(VARINT(nTx));
         if (nStatus & (BLOCK_HAVE_DATA | BLOCK_HAVE_UNDO))
             READWRITE(VARINT(nFile));
@@ -397,6 +435,8 @@ public:
         READWRITE(nBits);
         READWRITE(nNonce);
         READWRITE(nMoneySupply);
+        READWRITE(nStakeModifier);
+        READWRITE(nFlags);
     }
 
     uint256 GetBlockHash() const

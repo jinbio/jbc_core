@@ -32,6 +32,8 @@
 
 #include <boost/thread.hpp>
 
+#define SKIP_SIG_SYNC  12
+
 #if defined(NDEBUG)
 # error "JBCoin cannot be compiled without assertions."
 #endif
@@ -1742,7 +1744,7 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
         }
 
         // we must use CBlocks, as CBlockHeaders won't include the 0x00 nTx count at the end
-        std::vector<CBlock> vHeaders;
+        std::vector<CBlockHeader> vHeaders;
         int nLimit = MAX_HEADERS_RESULTS;
         LogPrint("net", "getheaders %d to %s from peer=%d\n", (pindex ? pindex->nHeight : -1), hashStop.IsNull() ? "end" : hashStop.ToString(), pfrom->id);
         for (; pindex; pindex = chainActive.Next(pindex))
@@ -2231,7 +2233,7 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
         headers.resize(nCount);
         for (unsigned int n = 0; n < nCount; n++) {
             vRecv >> headers[n];
-            ReadCompactSize(vRecv); // ignore tx count; assume it is 0.
+            // ReadCompactSize(vRecv); // ignore tx count; assume it is 0.
         }
 
         if (nCount == 0) {

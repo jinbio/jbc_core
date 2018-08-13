@@ -245,11 +245,8 @@ inline void UnserializeTransaction(TxType& tx, Stream& s) {
     const bool fAllowWitness = !(s.GetVersion() & SERIALIZE_TRANSACTION_NO_WITNESS);
 
     s >> tx.nVersion;
-#if TX_TIMESTAMP == 1
     s >> tx.nTime;//For PoS
-#else
     
-#endif    
     unsigned char flags = 0;
     tx.vin.clear();
     tx.vout.clear();
@@ -285,9 +282,7 @@ inline void SerializeTransaction(const TxType& tx, Stream& s) {
     const bool fAllowWitness = !(s.GetVersion() & SERIALIZE_TRANSACTION_NO_WITNESS);
 
     s << tx.nVersion;
-#if TX_TIMESTAMP == 1  
     s << tx.nTime;
-#endif    
     unsigned char flags = 0;
     // Consistency check
     if (fAllowWitness) {
@@ -391,7 +386,11 @@ public:
      * @return Total transaction size in bytes
      */
     unsigned int GetTotalSize() const;
-
+    bool IsCoinStake() const
+    {
+        // the coin stake transaction is marked with the first output empty
+        return (vin.size() > 0 && (!vin[0].prevout.IsNull()) && vout.size() >= 2 && vout[0].IsEmpty());
+    }
     bool IsCoinBase() const
     {
         return (vin.size() == 1 && vin[0].prevout.IsNull());
