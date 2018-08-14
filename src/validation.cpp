@@ -1106,7 +1106,6 @@ bool GetAddressUnspent(uint160 addressHash, int type, std::vector<std::pair<CAdd
 /** Return transaction in txOut, and if it was found inside a block, its hash is placed in hashBlock */
 bool GetTransaction(const uint256 &hash, CTransactionRef &txOut, const Consensus::Params& consensusParams, uint256 &hashBlock, bool fAllowSlow)
 {
-    DbgMsg("getTx... %s" ,hash.ToString());
     CBlockIndex *pindexSlow = NULL;
 
     LOCK(cs_main);
@@ -1120,7 +1119,6 @@ bool GetTransaction(const uint256 &hash, CTransactionRef &txOut, const Consensus
 
     if (fTxIndex) {
         CDiskTxPos postx;
-        DbgMsg("getTx %s" ,hash.ToString());
         if (pblocktree->ReadTxIndex(hash, postx)) {
             CAutoFile file(OpenBlockFile(postx, true), SER_DISK, CLIENT_VERSION);
             if (file.IsNull())

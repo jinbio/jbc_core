@@ -4097,6 +4097,7 @@ uint64_t CWallet::GetStakeWeight() const
 int64_t GetProofOfStakeReward(const CBlockIndex* pindexPrev, int64_t nCoinAge, int64_t nFees)
 {
     int64_t nSubsidy;
+    
     //TODO 
     nSubsidy = nCoinAge * 1 * CENT * 33 / (365 * 33 + 8);
 
@@ -4135,7 +4136,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
 
     // Select coins with suitable depth
     CAmount nTargetValue = nBalance - nReserveBalance;
-    DbgMsg("스태이킹할 코인 선택");
+    DbgMsg("스태이킹할 코인 선택 targetValue %d = %d - %d" , nTargetValue , nBalance , nReserveBalance);
     if (!SelectCoinsForStaking(nTargetValue, setCoins, nValueIn)) { 
     	return false;
     }
@@ -4164,7 +4165,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
     CScript scriptPubKeyKernel;
     
     int idx1 = 0;
-
+    DbgMsg( "find stake wallet tx... ");
     BOOST_FOREACH(const PAIRTYPE(const CWalletTx*, unsigned int)& pcoin, setCoins)
     {
         static int nMaxStakeSearchInterval = 60;
