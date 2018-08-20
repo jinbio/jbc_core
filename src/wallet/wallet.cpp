@@ -1190,17 +1190,53 @@ void CWallet::MarkConflicted(const uint256& hashBlock, const uint256& hashTx)
 void CWallet::SyncTransaction(const CTransaction& tx, const CBlockIndex *pindex, int posInBlock)
 {
     LOCK2(cs_main, cs_wallet);
+    if (posInBlock<0&&tx.IsCoinStake())   {
+        if (IsFromMe(tx))        {
+            // Do not flush the wallet here for performance reasons
+            CWalletDB walletdb(strWalletFile, "r+", false);
 
+            if (mapWallet.count(tx.GetHash()))
+            {
+                CWalletTx& wtx = mapWallet[tx.GetHash()];
+                wtx.MarkDirty();
+                walletdb.WriteTx(wtx);
+            }
+            else
+            {
+                LogPrintf("SyncTransaction : Warning: Could not find %s in wallet. Trying to refund someone else's tx?", tx.GetHash().ToString());
+            }
+
+            LogPrintf("SyncTransaction : Refunding inputs of orphan tx %s\n",tx.GetHash().ToString());
+
+            BOOST_FOREACH(const CTxIn& txin, tx.vin)
+            {
+                if (mapWallet.count(txin.prevout.hash))
+                    mapWallet[txin.prevout.hash].MarkDirty();
+            }
+        }
+    }
+    bool isMine = true;
     if (!AddToWalletIfInvolvingMe(tx, pindex, posInBlock, true))
-        return; // Not one of ours
+        isMine=false; // Not one of ours
 
     // If a transaction changes 'conflicted' state, that changes the balance
     // available of the outputs it spends. So force those to be
     // recomputed, also:
-    BOOST_FOREACH(const CTxIn& txin, tx.vin)
+    if(isMine == true ){ 
+        BOOST_FOREACH(const CTxIn& txin, tx.vin)
+        {
+            if (mapWallet.count(txin.prevout.hash))
+                mapWallet[txin.prevout.hash].MarkDirty();
+        }
+    }
+     if (posInBlock<0&& tx.IsCoinStake() && IsFromMe(tx))
     {
-        if (mapWallet.count(txin.prevout.hash))
-            mapWallet[txin.prevout.hash].MarkDirty();
+        AbandonTransaction(tx.GetHash());
+        LogPrintf("SyncTransaction : Removing tx %s from mapTxSpends\n",tx.GetHash().ToString());
+        BOOST_FOREACH(const CTxIn& txin, tx.vin)
+        {
+            mapTxSpends.erase(txin.prevout);
+        }
     }
 }
 
@@ -1230,7 +1266,6 @@ CAmount CWallet::GetDebit(const CTxIn &txin, const isminefilter& filter) const
         if (mi != mapWallet.end())
         {
             const CWalletTx& prev = (*mi).second;
-            DbgMsg("value %d" ,prev.tx->vout[txin.prevout.n].nValue);
             if (txin.prevout.n < prev.tx->vout.size())
                 if (IsMine(prev.tx->vout[txin.prevout.n]) & filter)
                     return prev.tx->vout[txin.prevout.n].nValue;
@@ -1424,7 +1459,7 @@ int CWalletTx::GetRequestCount() const
     int nRequests = -1;
     {
         LOCK(pwallet->cs_wallet);
-        if (IsCoinBase())
+        if (IsCoinBase() || IsCoinStake())
         {
             // Generated block
             if (!hashUnset())
@@ -1619,7 +1654,7 @@ void CWallet::ReacceptWalletTransactions()
 
         int nDepth = wtx.GetDepthInMainChain();
 
-        if (!wtx.IsCoinBase() && (nDepth == 0 && !wtx.isAbandoned())) {
+        if (!(wtx.IsCoinBase() || wtx.IsCoinStake())  && (nDepth == 0 && !wtx.isAbandoned())) {
             mapSorted.insert(std::make_pair(wtx.nOrderPos, &wtx));
         }
     }
@@ -1735,7 +1770,7 @@ CAmount CWalletTx::GetCredit(const isminefilter& filter) const
 
 CAmount CWalletTx::GetImmatureCredit(bool fUseCache) const
 {
-    if (IsCoinBase() && GetBlocksToMaturity() > 0 && IsInMainChain())
+    if ((IsCoinBase() || IsCoinStake()) && GetBlocksToMaturity() > 0 && IsInMainChain())
     {
         if (fUseCache && fImmatureCreditCached)
             return nImmatureCreditCached;
@@ -1746,6 +1781,7 @@ CAmount CWalletTx::GetImmatureCredit(bool fUseCache) const
 
     return 0;
 }
+
 
 CAmount CWalletTx::GetAvailableCredit(bool fUseCache) const
 {
@@ -1779,7 +1815,7 @@ CAmount CWalletTx::GetAvailableCredit(bool fUseCache) const
 
 CAmount CWalletTx::GetImmatureWatchOnlyCredit(const bool& fUseCache) const
 {
-    if (IsCoinBase() && GetBlocksToMaturity() > 0 && IsInMainChain())
+    if ((IsCoinBase() || IsCoinStake()) && GetBlocksToMaturity() > 0 && IsInMainChain())
     {
         if (fUseCache && fImmatureWatchCreditCached)
             return nImmatureWatchCreditCached;
@@ -1797,7 +1833,7 @@ CAmount CWalletTx::GetAvailableWatchOnlyCredit(const bool& fUseCache) const
         return 0;
 
     // Must wait until coinbase is safely deep enough in the chain before valuing it
-    if (IsCoinBase() && GetBlocksToMaturity() > 0)
+    if ((IsCoinBase() || IsCoinStake()) && GetBlocksToMaturity() > 0)
         return 0;
 
     if (fUseCache && fAvailableWatchCreditCached)
@@ -2045,7 +2081,7 @@ void CWallet::AvailableCoins(vector<COutput>& vCoins, bool fOnlyConfirmed, const
             if (fOnlyConfirmed && !pcoin->IsTrusted())
                 continue;
 
-            if (pcoin->IsCoinBase() && pcoin->GetBlocksToMaturity() > 0)
+            if ((pcoin->IsCoinBase() || pcoin->IsCoinStake()) && pcoin->GetBlocksToMaturity() > 0)
                 continue;
 
             int nDepth = pcoin->GetDepthInMainChain();
@@ -3140,7 +3176,7 @@ std::map<CTxDestination, CAmount> CWallet::GetAddressBalances()
             if (!pcoin->IsTrusted())
                 continue;
 
-            if (pcoin->IsCoinBase() && pcoin->GetBlocksToMaturity() > 0)
+            if ((pcoin->IsCoinStake() || pcoin->IsCoinBase())  && pcoin->GetBlocksToMaturity() > 0)
                 continue;
 
             int nDepth = pcoin->GetDepthInMainChain();
@@ -3975,7 +4011,7 @@ int CMerkleTx::GetDepthInMainChain(const CBlockIndex* &pindexRet) const
 
 int CMerkleTx::GetBlocksToMaturity() const
 {
-    if (!IsCoinBase())
+    if (!(IsCoinBase() || IsCoinStake()))
         return 0;
     return max(0, (COINBASE_MATURITY+1) - GetDepthInMainChain());
 }
@@ -4136,12 +4172,11 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
 
     // Select coins with suitable depth
     CAmount nTargetValue = nBalance - nReserveBalance;
-    DbgMsg("스태이킹할 코인 선택 targetValue %d = %d - %d" , nTargetValue , nBalance , nReserveBalance);
+    //DbgMsg("스태이킹할 코인 선택 targetValue %d = %d - %d" , nTargetValue , nBalance , nReserveBalance);
     if (!SelectCoinsForStaking(nTargetValue, setCoins, nValueIn)) { 
     	return false;
     }
 
-    DbgMsg("코인 제로이면 실패...");
     if (setCoins.empty())
     	return false;
 
@@ -4165,7 +4200,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
     CScript scriptPubKeyKernel;
     
     int idx1 = 0;
-    DbgMsg( "find stake wallet tx... ");
+    
     BOOST_FOREACH(const PAIRTYPE(const CWalletTx*, unsigned int)& pcoin, setCoins)
     {
         static int nMaxStakeSearchInterval = 60;

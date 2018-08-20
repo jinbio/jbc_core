@@ -1748,12 +1748,7 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
         for (; pindex; pindex = chainActive.Next(pindex))
         {
             CBlockHeader header = pindex->GetBlockHeader();
-            DbgMsg("header index:%d %s\n\t%s\n\t%s", pindex->nHeight,pindex->ToString(),
-                header.GetHash().ToString(), header.hashPrevBlock.ToString());
-            DbgMsg("header  %s" , header.ToString());
-            
             vHeaders.push_back(header);
-        
             if (--nLimit <= 0 || pindex->GetBlockHash() == hashStop)
                 break;
         }
@@ -2282,8 +2277,6 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
             int idx =0;
             for (const CBlockHeader& header : headers) {
                 idx++;
-                DbgMsg("header :%d \n\t%s\n\t%s" , idx, header.GetHash().ToString(), header.hashPrevBlock.ToString());
-                DbgMsg("header %s" , header.ToString());
                 if (!hashLastBlock.IsNull() && header.hashPrevBlock != hashLastBlock) {
                     Misbehaving(pfrom->GetId(), 20);
                     DbgMsg("ERROR Misbehaving......idx:%d %d %s,%s" ,idx, hashLastBlock.IsNull(), header.hashPrevBlock.ToString(), hashLastBlock.ToString());
