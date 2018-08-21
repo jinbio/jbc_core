@@ -148,6 +148,7 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
 
     // Add dummy coinbase tx as first transaction
     pblock->vtx.emplace_back();
+    // pblock->vtx.push_back(CTransactionRef());
     pblocktemplate->vTxFees.push_back(-1); // updated at end
     pblocktemplate->vTxSigOpsCost.push_back(-1); // updated at end
 
@@ -175,8 +176,8 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     // TODO: replace this with a call to main to assess validity of a mempool
     // transaction (which in most cases can be a no-op).
     fIncludeWitness = IsWitnessEnabled(pindexPrev, chainparams.GetConsensus()) && fMineWitnessTx;
-
-    addPriorityTxs();
+    
+    addPriorityTxs(fProofOfStake, pblock->nTime);
     int nPackagesSelected = 0;
     int nDescendantsUpdated = 0;
     addPackageTxs(nPackagesSelected, nDescendantsUpdated);
@@ -227,7 +228,7 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     pblocktemplate->vTxSigOpsCost[0] = WITNESS_SCALE_FACTOR * GetLegacySigOpCount(*pblock->vtx[0]);
 
     CValidationState state;
-    DbgMsg("check test!!!  %d" , pblock->IsProofOfStake());
+    
     if (!fProofOfStake &&!TestBlockValidity(state, chainparams, *pblock, pindexPrev, false, false)) {
         DbgMsg("not stake");
         throw std::runtime_error(strprintf("%s: TestBlockValidity failed: %s", __func__, FormatStateMessage(state)));
@@ -570,7 +571,7 @@ void BlockAssembler::addPackageTxs(int &nPackagesSelected, int &nDescendantsUpda
     }
 }
 
-void BlockAssembler::addPriorityTxs()
+void BlockAssembler::addPriorityTxs(bool fProofOfStake, int blockTime)
 {
     // How much of the block should be dedicated to high-priority transactions,
     // included regardless of the fees they pay
@@ -618,7 +619,9 @@ void BlockAssembler::addPriorityTxs()
         // cannot accept witness transactions into a non-witness block
         if (!fIncludeWitness && iter->GetTx().HasWitness())
             continue;
-
+        
+        if ((fProofOfStake && iter->GetTx().nTime > (unsigned int)blockTime))
+            continue;
         // If tx is dependent on other mempool txs which haven't yet been included
         // then put it in the waitSet
         if (isStillDependent(iter)) {
@@ -671,7 +674,7 @@ void IncrementExtraNonce(CBlock* pblock, const CBlockIndex* pindexPrev, unsigned
     pblock->hashMerkleRoot = BlockMerkleRoot(*pblock);
 }
 
-#ifdef ENABLE_WALLET
+
 // novacoin: attempt to generate suitable proof-of-stake
 bool SignBlock(CBlock& block, CWallet& wallet, int64_t& nFees)
 {
@@ -704,7 +707,8 @@ bool SignBlock(CBlock& block, CWallet& wallet, int64_t& nFees)
     DbgMsg("sign1");
     if (nSearchTime > nLastCoinStakeSearchTime)
     {
-        if (wallet.CreateCoinStake(wallet, block.nBits, 1, nFees, txCoinStake, key))
+        // 목표 비트로 n(60) 번 코인을 찾는다.
+        if (wallet.CreateCoinStake(wallet, block.nBits, 60, nFees, txCoinStake, key))
         {
             if (txCoinStake.nTime >= pindexBestHeader->GetPastTimeLimit()+1)
             {
@@ -732,7 +736,7 @@ bool SignBlock(CBlock& block, CWallet& wallet, int64_t& nFees)
 
     return false;
 }
-#endif
+
 void ThreadStakeMiner(CWallet *pwallet, const CChainParams& chainparams)
 {
     LogPrintf("staking start....");
@@ -746,8 +750,10 @@ void ThreadStakeMiner(CWallet *pwallet, const CChainParams& chainparams)
 
     bool fTryToSync = true;
     bool testStake =true;
+    int nCount =0;
     while (true)
     {
+        DbgMsg("Staking=========> %d" , nCount);
         while (pwallet->IsLocked())
         {
             nLastCoinStakeSearchInterval = 0;
@@ -790,7 +796,7 @@ void ThreadStakeMiner(CWallet *pwallet, const CChainParams& chainparams)
             CheckStake(pblock, *pwallet, chainparams);
             DbgMsg("EDN ######## found =================== STAKE ==== >");
             SetThreadPriority(THREAD_PRIORITY_LOWEST);
-            MilliSleep(nMinerSleep * 10);
+            MilliSleep(nMinerSleep );
         }
         else { 
             DbgMsg("EDN ######## found fail =================== STAKE ==== >");

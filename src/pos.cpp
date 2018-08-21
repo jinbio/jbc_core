@@ -66,7 +66,7 @@ bool CheckStakeBlockTimestamp(int64_t nTimeBlock)
 //   quantities so as to generate blocks faster, degrading the system back into
 //   a proof-of-work situation.
 //
-bool CheckStakeKernelHash(const CBlockIndex* pindexPrev, unsigned int nBits, const CCoins* txPrev, const COutPoint& prevout, unsigned int nTimeTx)
+bool CheckStakeKernelHash(const CBlockIndex* pindexPrev, unsigned int nBits,  CBlockIndex& blockFrom, const CCoins* txPrev, const COutPoint& prevout, unsigned int nTimeTx)
 {
     // Weight
     int64_t nValueIn = txPrev->vout[prevout.n].nValue;
@@ -109,6 +109,11 @@ bool CheckProofOfStake(CBlockIndex* pindexPrev, const CTransaction& tx, unsigned
 
     // Kernel (input 0) must match the stake hash target per coin age (nBits)
     const CTxIn& txin = tx.vin[0];
+    
+    CTransaction txPrev;
+    uint256 hashBlock = uint256();
+    if (!GetTransaction(txin.prevout.hash, txPrev, Params().GetConsensus(), hashBlock, true))
+        return error("CheckProofOfStake() : INFO: read txPrev failed %s",txin.prevout.hash.GetHex());  // previous transaction not in main chain, may occur during initial download
 
     // First try finding the previous transaction in database
     
@@ -132,8 +137,8 @@ bool CheckProofOfStake(CBlockIndex* pindexPrev, const CTransaction& tx, unsigned
     int nDepth;
     if (IsConfirmedInNPrevBlocks(txindex, pindexPrev, STAKE_MIN_CONFIRMATIONS - 1, nDepth))
         return state.DoS(100, error("CheckProofOfStake() : tried to stake at depth %d", nDepth + 1));
-
-    if (!CheckStakeKernelHash(pindexPrev, nBits, new CCoins(txPrev, pindexPrev->nHeight), txin.prevout, tx.nTime))
+    CBlockIndex* pblockindex = mapBlockIndex[hashBlock];
+    if (!CheckStakeKernelHash(pindexPrev, nBits, pblockindex , new CCoins(txPrev, pindexPrev->nHeight), txin.prevout, tx.nTime))
         return state.DoS(1, error("CheckProofOfStake() : INFO: check kernel failed on coinstake %s", tx.GetHash().ToString())); // may occur during initial download or if behind on block chain sync
 
     return true;

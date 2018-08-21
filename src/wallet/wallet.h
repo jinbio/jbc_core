@@ -247,7 +247,7 @@ public:
     const uint256& GetHash() const { return tx->GetHash(); }
     bool IsCoinBase() const { return tx->IsCoinBase(); }
     bool IsCoinStake() const { return tx->IsCoinStake(); }
-     CAmount GetValueOut() const {return tx->GetValueOut();}
+    CAmount GetValueOut() const {return tx->GetValueOut();}
 };
 
 /** 

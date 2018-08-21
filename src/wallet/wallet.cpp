@@ -1673,7 +1673,7 @@ void CWallet::ReacceptWalletTransactions()
 bool CWalletTx::RelayWalletTransaction(CConnman* connman)
 {
     assert(pwallet->GetBroadcastTransactions());
-    if (!IsCoinBase() && !isAbandoned() && GetDepthInMainChain() == 0)
+    if (!(IsCoinBase() || IsCoinStake()) && !isAbandoned() && GetDepthInMainChain() == 0)
     {
         CValidationState state;
         /* GetDepthInMainChain already catches known conflicts. */
@@ -1738,7 +1738,7 @@ CAmount CWalletTx::GetDebit(const isminefilter& filter) const
 CAmount CWalletTx::GetCredit(const isminefilter& filter) const
 {
     // Must wait until coinbase is safely deep enough in the chain before valuing it
-    if (IsCoinBase() && GetBlocksToMaturity() > 0)
+    if ((IsCoinBase() || IsCoinStake()) && GetBlocksToMaturity() > 0)
         return 0;
 
     CAmount credit = 0;
@@ -1789,7 +1789,7 @@ CAmount CWalletTx::GetAvailableCredit(bool fUseCache) const
         return 0;
 
     // Must wait until coinbase is safely deep enough in the chain before valuing it
-    if (IsCoinBase() && GetBlocksToMaturity() > 0)
+    if ((IsCoinBase()||IsCoinStake() ) && GetBlocksToMaturity() > 0)
         return 0;
 
     if (fUseCache && fAvailableCreditCached)
@@ -4076,6 +4076,20 @@ bool CWallet::SelectCoinsForStaking(CAmount& nTargetValue, std::set<std::pair<co
             break;
 
         int64_t n = pcoin->tx->vout[i].nValue;
+        if(n < 1 *COIN){
+            DbgMsg("too small ammount %d" , n);
+            continue;
+        }
+        DbgMsg( "nTime %d" , pcoin->GetTxTime() );
+        int64_t current = GetTime();
+        // skip early tx.
+        if( pcoin->GetTxTime() + Params().GetConsensus().nStakeMinAge >current ){ 
+            DbgMsg("Skip too early tx ...  %d + %d > %d (gap: %d min) ,coin:%d " ,
+                pcoin->GetTxTime() , Params().GetConsensus().nStakeMinAge , current ,
+                ((pcoin->GetTxTime() + Params().GetConsensus().nStakeMinAge) - current)/60 ,
+                n / COIN);
+            continue;
+        }
 
         pair<int64_t,pair<const CWalletTx*,unsigned int> > coin = make_pair(n,make_pair(pcoin, i));
 
@@ -4093,7 +4107,7 @@ bool CWallet::SelectCoinsForStaking(CAmount& nTargetValue, std::set<std::pair<co
             nValueRet += coin.first;
         }
     }
-
+    DbgMsg("Stake tx count :%d" , setCoinsRet.size());
     return true;
 }
 
@@ -4200,11 +4214,13 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
     CScript scriptPubKeyKernel;
     
     int idx1 = 0;
-    
+    // enum wallet tx..
     BOOST_FOREACH(const PAIRTYPE(const CWalletTx*, unsigned int)& pcoin, setCoins)
     {
+        DbgMsg("make stake #1 %d" ,idx1++ );
         static int nMaxStakeSearchInterval = 60;
         bool fKernelFound = false;
+        // find wallet tx nounce
         for (unsigned int n=0; n<min(nSearchInterval,(int64_t)nMaxStakeSearchInterval) && !fKernelFound && pindexPrev == pindexBestHeader; n++)
         {
             boost::this_thread::interruption_point();
@@ -4309,8 +4325,10 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
             return error("CreateCoinStake : failed to calculate coin age");
 
         int64_t nReward = GetProofOfStakeReward(pindexPrev, nCoinAge, nFees);
-        if (nReward <= 0)
+        if (nReward <= 0){
+            DbgMsg("Skip Reward 0");
             return false;
+        }
 
         nCredit += nReward;
     }

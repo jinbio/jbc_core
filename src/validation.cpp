@@ -533,7 +533,7 @@ bool CheckTransaction(const CTransaction& tx, CValidationState &state, bool fChe
     if (tx.IsCoinBase())
     {
         if (tx.vin[0].scriptSig.size() < 2 || tx.vin[0].scriptSig.size() > 100) { 
-            ("vin[0] size :%d , isStake:%d" ,tx.vin[0].scriptSig.size() , tx.IsCoinStake());
+            DbgMsg("vin[0] size :%d , isStake:%d" ,tx.vin[0].scriptSig.size() , tx.IsCoinStake());
             return state.DoS(100, false, REJECT_INVALID, "bad-cb-length1");
         }
     }
@@ -4879,7 +4879,7 @@ bool GetCoinAge(const CTransaction& tx, CBlockTreeDB& txdb, const CBlockIndex* p
     BOOST_FOREACH(const CTxIn& txin, tx.vin)
     {
         // First try finding the previous transaction in database
-        
+        DbgMsg("Stake proposal %s" , txin.ToString());
         CDiskTxPos txindex;
         CMutableTransaction txPrevMu;
         if (!ReadFromDisk(txPrevMu, txindex, *pblocktree, txin.prevout))
@@ -4894,17 +4894,26 @@ bool GetCoinAge(const CTransaction& tx, CBlockTreeDB& txdb, const CBlockIndex* p
         const CDiskBlockPos& pos = CDiskBlockPos(txindex.nFile, txindex.nPos);
         if (!ReadBlockFromDisk(block, pos, Params().GetConsensus()))
             return false; // unable to read block of previous transaction
-        if (block.GetBlockTime() + Params().GetConsensus().nStakeMinAge > tx.nTime)
+        if (block.GetBlockTime() + Params().GetConsensus().nStakeMinAge > tx.nTime){ 
+            DbgMsg(" block: %d + %d > tx:%d  , gap %d" ,
+                block.GetBlockTime() ,
+                Params().GetConsensus().nStakeMinAge , 
+                tx.nTime ,
+               ( block.GetBlockTime() + Params().GetConsensus().nStakeMinAge) - tx.nTime);
+            DbgMsg("block %s" , block.ToString());
             continue; // only count coins meeting min age requirement
+        }
 
         int64_t nValueIn = txPrev.vout[txin.prevout.n].nValue;
         bnCentSecond += arith_uint256(nValueIn) * (tx.nTime-txPrev.nTime) / CENT;
 
-        LogPrint("coinage", "coin age nValueIn=%d nTimeDiff=%d bnCentSecond=%s\n", nValueIn, tx.nTime - txPrev.nTime, bnCentSecond.ToString());
+        LogPrint("coinage", "coin age nValueIn=%d nTimeDiff=%d- bnCentSecond=%s\n", nValueIn, tx.nTime - txPrev.nTime, bnCentSecond.ToString());
     }
 
     arith_uint256 bnCoinDay = bnCentSecond * CENT / COIN / (24 * 60 * 60);
-    LogPrint("coinage", "coin age bnCoinDay=%s\n", bnCoinDay.ToString());
+    LogPrint("coinage", "coin age bnCoinDay=%s  bnCoinSecond=%s  \n", 
+        bnCoinDay.ToString() ,
+        bnCentSecond.ToString() );
     nCoinAge = bnCoinDay.GetLow64();
     return true;
 }
