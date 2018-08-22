@@ -4075,11 +4075,24 @@ void CWallet::AvailableCoinsForStaking(std::vector<COutput>& vCoins) const
             for (unsigned int i = 0; i < pcoin->tx->vout.size(); i++) {
                 isminetype mine = IsMine(pcoin->tx->vout[i]);
                 if (!(IsSpent(wtxid, i)) && mine != ISMINE_NO &&
-                    !IsLockedCoin((*it).first, i) && (pcoin->tx->vout[i].nValue > 0))
+                    !IsLockedCoin((*it).first, i) && (pcoin->tx->vout[i].nValue > 0)) { 
                 	vCoins.push_back(COutput(pcoin, i, nDepth,
-                	                                                 ((mine & ISMINE_SPENDABLE) != ISMINE_NO) ||
-                	                                                  (mine & ISMINE_WATCH_SOLVABLE) != ISMINE_NO,
-                                                                      (mine & (ISMINE_SPENDABLE | ISMINE_WATCH_SOLVABLE)) != ISMINE_NO));
+                                            ((mine & ISMINE_SPENDABLE) != ISMINE_NO) ||
+                                            (mine & ISMINE_WATCH_SOLVABLE) != ISMINE_NO,
+                                            (mine & (ISMINE_SPENDABLE | ISMINE_WATCH_SOLVABLE)) != ISMINE_NO));
+                    DbgMsg("Spenable....");
+                }else { 
+                     DbgMsg("spent %d isLocked %d value %d isMine %d " , IsSpent(wtxid, i),
+                        IsLockedCoin((*it).first, i),
+                        pcoin->tx->vout[i].nValue,
+                        mine );
+                    if (!(IsSpent(wtxid, i)) && 
+                    !IsLockedCoin((*it).first, i) && (pcoin->tx->vout[i].nValue > 0)) { 
+                        DbgMsg("stop");
+                        isminetype mine1 = IsMine(pcoin->tx->vout[i]);
+                    }
+                   
+                }
             }
         }
     }
