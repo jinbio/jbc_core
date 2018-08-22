@@ -1986,18 +1986,21 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     // Check proof-of-stake
     if (block.IsProofOfStake() ) {
          const COutPoint &prevout = block.vtx[1]->vin[0].prevout;
+
          const CCoins *coins = view.AccessCoins(prevout.hash);
           if (!coins)
               return state.DoS(100, error("%s: kernel input unavailable", __func__),
                                 REJECT_INVALID, "bad-cs-kernel");
 
-        // Check proof-of-stake min confirmations
-         if (pindex->nHeight - coins->nHeight < STAKE_MIN_CONFIRMATIONS)
-              return state.DoS(100,
-                  error("%s: tried to stake at depth %d", __func__, pindex->nHeight - coins->nHeight),
-                    REJECT_INVALID, "bad-cs-premature");
-
-         if (!CheckStakeKernelHash(pindex->pprev, block.nBits, coins, prevout, block.vtx[1]->nTime))
+        
+        const CTxIn& txin = block.vtx[1]->vin[0];
+        CTransactionRef txPrev;
+        uint256 hashBlock = uint256();
+        if (!GetTransaction(txin.prevout.hash, txPrev, Params().GetConsensus(), hashBlock, true))
+            return error("CheckProofOfStake() : INFO: read txPrev failed %s",txin.prevout.hash.GetHex());
+        
+        CBlockIndex* pblockindex = mapBlockIndex[hashBlock];
+         if (!CheckStakeKernelHash(pindex->pprev, block.nBits,*pblockindex, coins, prevout, block.vtx[1]->nTime))
               return state.DoS(100, error("%s: proof-of-stake hash doesn't match nBits", __func__),
                                  REJECT_INVALID, "bad-cs-proofhash");
     }

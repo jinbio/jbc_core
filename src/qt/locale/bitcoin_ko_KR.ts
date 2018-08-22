@@ -1223,6 +1223,10 @@
         <translation>아직 사용 불가능:</translation>
     </message>
     <message>
+        <source>Stake:</source>
+        <translation>참여지분:</translation>
+    </message>
+    <message>
         <source>Mined balance that has not yet matured</source>
         <translation>아직 사용 가능하지 않은 채굴된 잔액</translation>
     </message>

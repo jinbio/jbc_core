@@ -39,4 +39,6 @@ bool IsConfirmedInNPrevBlocks(const CDiskTxPos& txindex, const CBlockIndex* pind
 bool CheckProofOfStake(CBlockIndex* pindexPrev, const CTransaction& tx, unsigned int nBits, CValidationState &state);
 void CacheKernel(std::map<COutPoint, CStakeCache>& cache, const COutPoint& prevout);
 bool VerifySignature(const CTransaction& txFrom, const CTransaction& txTo, unsigned int nIn, unsigned int flags, int nHashType);
+
+
 #endif // BLACKCOIN_POS_H

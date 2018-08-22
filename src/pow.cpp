@@ -22,7 +22,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         return nProofOfWorkLimit;
     }
     
-    const CBlockIndex* pindexPrev = GetLastPowBlockIndex(pindexLast, fProofOfStake);
+    const CBlockIndex* pindexPrev = GetLastBlockIndex(pindexLast, fProofOfStake);
     if(pindexPrev==NULL||pindexPrev->pprev==NULL){
         return nProofOfWorkLimit;
     }

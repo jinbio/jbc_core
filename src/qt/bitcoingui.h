@@ -88,6 +88,7 @@ private:
     QLabel *connectionsControl;
     QLabel *labelBlocksIcon;
     QLabel *progressBarLabel;
+    QLabel *labelStakingIcon;
     QProgressBar *progressBar;
     QProgressDialog *progressDialog;
 
@@ -125,6 +126,7 @@ private:
     int prevBlocks;
     int spinnerFrame;
 
+    uint64_t nWeight;
     const PlatformStyle *platformStyle;
 
     /** Create the main UI actions. */
@@ -229,6 +231,10 @@ private Q_SLOTS:
     void showNormalIfMinimized(bool fToggleHidden = false);
     /** Simply calls showNormalIfMinimized(true) for use in SLOT() macro */
     void toggleHidden();
+
+	void updateWeight();
+
+    void updateStakingIcon();
 
     /** called by a timer to check if fRequestShutdown has been set **/
     void detectShutdown();

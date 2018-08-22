@@ -40,6 +40,7 @@ extern CFeeRate payTxFee;
 extern unsigned int nTxConfirmTarget;
 extern bool bSpendZeroConfChange;
 extern bool fSendFreeTransactions;
+extern bool fWalletUnlockStakingOnly;
 extern bool fWalletRbf;
 extern CAmount nReserveBalance;
 extern CAmount nMinimumInputValue;

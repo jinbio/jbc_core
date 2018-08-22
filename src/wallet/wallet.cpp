@@ -2184,6 +2184,33 @@ static void ApproximateBestSubset(vector<pair<CAmount, pair<const CWalletTx*,uns
     }
 }
 
+CAmount CWallet::GetWatchOnlyStake() const
+{
+    CAmount nTotal = 0;
+    LOCK2(cs_main, cs_wallet);
+    for (map<uint256, CWalletTx>::const_iterator it = mapWallet.begin(); it != mapWallet.end(); ++it)
+    {
+        const CWalletTx* pcoin = &(*it).second;
+        if (pcoin->IsCoinStake() && pcoin->GetBlocksToMaturity() > 0 && pcoin->GetDepthInMainChain() > 0)
+            nTotal += CWallet::GetCredit(*pcoin, ISMINE_WATCH_ONLY);
+    }
+    return nTotal;
+}
+
+// ppcoin: total coins staked (non-spendable until maturity)
+CAmount CWallet::GetStake() const
+{
+    CAmount nTotal = 0;
+    LOCK2(cs_main, cs_wallet);
+    for (map<uint256, CWalletTx>::const_iterator it = mapWallet.begin(); it != mapWallet.end(); ++it)
+    {
+        const CWalletTx* pcoin = &(*it).second;
+        if (pcoin->IsCoinStake() && pcoin->GetBlocksToMaturity() > 0 && pcoin->GetDepthInMainChain() > 0)
+            nTotal += CWallet::GetCredit(*pcoin, ISMINE_SPENDABLE);
+    }
+    return nTotal;
+}
+
 bool CWallet::SelectCoinsMinConf(const CAmount& nTargetValue, const int nConfMine, const int nConfTheirs, const uint64_t nMaxAncestors, vector<COutput> vCoins,
                                  set<pair<const CWalletTx*,unsigned int> >& setCoinsRet, CAmount& nValueRet) const
 {
@@ -4026,7 +4053,7 @@ bool CMerkleTx::AcceptToMemoryPool(const CAmount& nAbsurdFee, CValidationState& 
 void CWallet::AvailableCoinsForStaking(std::vector<COutput>& vCoins) const
 {
     vCoins.clear();
-
+    int64_t nSpendTime = GetTime();
     {
         LOCK2(cs_main, cs_wallet);
         for (map<uint256, CWalletTx>::const_iterator it = mapWallet.begin(); it != mapWallet.end(); ++it)
@@ -4037,13 +4064,14 @@ void CWallet::AvailableCoinsForStaking(std::vector<COutput>& vCoins) const
             int nDepth = pcoin->GetDepthInMainChain();
             if (nDepth < 1)
                 continue;
-
-			if (nDepth < STAKE_MIN_CONFIRMATIONS)
-				continue;
-
+            // Filtering by tx timestamp instead of block timestamp may give false positives but never false negatives
+            if (pcoin->GetTxTime() + Params().GetConsensus().nStakeMinAge > nSpendTime)
+                continue;
+			
             if (pcoin->GetBlocksToMaturity() > 0)
                 continue;
-
+            if (pcoin->isAbandoned())
+                continue;
             for (unsigned int i = 0; i < pcoin->tx->vout.size(); i++) {
                 isminetype mine = IsMine(pcoin->tx->vout[i]);
                 if (!(IsSpent(wtxid, i)) && mine != ISMINE_NO &&
@@ -4058,7 +4086,7 @@ void CWallet::AvailableCoinsForStaking(std::vector<COutput>& vCoins) const
 }
 
 // Select some coins without random shuffle or best subset approximation
-bool CWallet::SelectCoinsForStaking(CAmount& nTargetValue, std::set<std::pair<const CWalletTx*,unsigned int> >& setCoinsRet, CAmount& nValueRet) const
+bool CWallet::SelectCoinsForStaking(CAmount& nTargetValue,   std::set<std::pair<const CWalletTx*,unsigned int> >& setCoinsRet, CAmount& nValueRet) const
 {
     vector<COutput> vCoins;
     AvailableCoinsForStaking(vCoins);
@@ -4132,12 +4160,15 @@ uint64_t CWallet::GetStakeWeight() const
         return 0;
 
     uint64_t nWeight = 0;
-
+    int64_t nCurrentTime = GetTime();
     LOCK2(cs_main, cs_wallet);
     BOOST_FOREACH(PAIRTYPE(const CWalletTx*, unsigned int) pcoin, setCoins)
     {
-		if (pcoin.first->GetDepthInMainChain() >=STAKE_MIN_CONFIRMATIONS)
-			nWeight += pcoin.first->tx->vout[pcoin.second].nValue;
+		if (!mapWallet.count(pcoin.first->GetHash()))
+            continue;
+
+        if (nCurrentTime - pcoin.first->GetTxTime() > Params().GetConsensus().nStakeMinAge)
+            nWeight += pcoin.first->tx->vout[pcoin.second].nValue;
     }
 
     return nWeight;

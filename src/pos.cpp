@@ -72,7 +72,8 @@ bool CheckStakeKernelHash(const CBlockIndex* pindexPrev, unsigned int nBits,  CB
     int64_t nValueIn = txPrev->vout[prevout.n].nValue;
     if (nValueIn == 0)
         return false;
-
+    if (blockFrom.GetBlockTime() + Params().GetConsensus().nStakeMinAge > nTimeTx) // Min age requirement
+        return error("CheckStakeKernelHash() : min age violation");
     // Base target
     arith_uint256 bnTarget;
     bnTarget.SetCompact(nBits);
@@ -110,35 +111,26 @@ bool CheckProofOfStake(CBlockIndex* pindexPrev, const CTransaction& tx, unsigned
     // Kernel (input 0) must match the stake hash target per coin age (nBits)
     const CTxIn& txin = tx.vin[0];
     
-    CTransaction txPrev;
+    
+    CTransactionRef txPrev;
     uint256 hashBlock = uint256();
     if (!GetTransaction(txin.prevout.hash, txPrev, Params().GetConsensus(), hashBlock, true))
-        return error("CheckProofOfStake() : INFO: read txPrev failed %s",txin.prevout.hash.GetHex());  // previous transaction not in main chain, may occur during initial download
-
-    // First try finding the previous transaction in database
+        return error("CheckProofOfStake() : INFO: read txPrev failed %s",txin.prevout.hash.GetHex());
     
-    CMutableTransaction txPrevMu;
+
     CDiskTxPos txindex;
 
-    if (!ReadFromDisk(txPrevMu, txindex, *pblocktree, txin.prevout))
-        return state.DoS(1, error("CheckProofOfStake() : INFO: read txPrev failed")); // previous transaction not in main chain, may occur during initial download
-    CTransaction txPrev(txPrevMu);
     // Verify signature
-    if (!VerifySignature(txPrev, tx, 0, SCRIPT_VERIFY_NONE, 0))
+    if (!VerifySignature(*txPrev, tx, 0, SCRIPT_VERIFY_NONE, 0))
         return state.DoS(100, error("CheckProofOfStake() : VerifySignature failed on coinstake %s", tx.GetHash().ToString()));
+ 
 
-    // Read block header
-    CBlock block;
-    const CDiskBlockPos& pos = CDiskBlockPos(txindex.nFile, txindex.nPos);
-    if (!ReadBlockFromDisk(block, pos, Params().GetConsensus()))
-        return fDebug ? error("CheckProofOfStake() : read block failed") : false; // unable to read block of previous transaction
+    if (mapBlockIndex.count(hashBlock) == 0)
+        return fDebug? error("CheckProofOfStake() : read block failed") : false; // unable to read block of previous transaction
 
-    // Min age requirement
-    int nDepth;
-    if (IsConfirmedInNPrevBlocks(txindex, pindexPrev, STAKE_MIN_CONFIRMATIONS - 1, nDepth))
-        return state.DoS(100, error("CheckProofOfStake() : tried to stake at depth %d", nDepth + 1));
+    
     CBlockIndex* pblockindex = mapBlockIndex[hashBlock];
-    if (!CheckStakeKernelHash(pindexPrev, nBits, pblockindex , new CCoins(txPrev, pindexPrev->nHeight), txin.prevout, tx.nTime))
+    if (!CheckStakeKernelHash(pindexPrev, nBits, *pblockindex , new CCoins(*txPrev, pindexPrev->nHeight), txin.prevout, tx.nTime))
         return state.DoS(1, error("CheckProofOfStake() : INFO: check kernel failed on coinstake %s", tx.GetHash().ToString())); // may occur during initial download or if behind on block chain sync
 
     return true;
@@ -170,31 +162,37 @@ bool CheckKernel(CBlockIndex* pindexPrev, unsigned int nBits, uint32_t nTime, co
     auto it = cache.find(prevout);
 
     if (it == cache.end()) {
-        CMutableTransaction tmpPrevTx;
-        CDiskTxPos txindex;
-        if (!ReadFromDisk(tmpPrevTx, txindex, *pblocktree, prevout))
+        CTransactionRef txPrev;
+        uint256 hashBlock = uint256();
+        if (!GetTransaction(prevout.hash, txPrev, Params().GetConsensus(), hashBlock, true)){
+            LogPrintf("CheckKernel : Could not find previous transaction %s\n",prevout.hash.ToString());
             return false;
-        CTransaction txPrev(tmpPrevTx);//
-        // Read block header
-        CBlock block;
-        const CDiskBlockPos& pos = CDiskBlockPos(txindex.nFile, txindex.nPos);
-        if (!ReadBlockFromDisk(block, pos, Params().GetConsensus()))
+        }
+        
+        if (mapBlockIndex.count(hashBlock) == 0){
+            LogPrintf("CheckKernel : Could not find block of previous transaction %s\n",hashBlock.ToString());
             return false;
+        }
 
-        int nDepth;
-        if (IsConfirmedInNPrevBlocks(txindex, pindexPrev,STAKE_MIN_CONFIRMATIONS - 1, nDepth))
+        CBlockIndex* pblockindex = mapBlockIndex[hashBlock];
+
+        if (pblockindex->GetBlockTime() + Params().GetConsensus().nStakeMinAge > nTime)
             return false;
 
         if (pBlockTime)
-            *pBlockTime = block.GetBlockTime();
+             *pBlockTime = pblockindex->GetBlockTime();
 
-        return CheckStakeKernelHash(pindexPrev, nBits, new CCoins(txPrev, pindexPrev->nHeight), prevout, nTime);
+        return CheckStakeKernelHash(pindexPrev, nBits,*pblockindex, new CCoins(*txPrev, pindexPrev->nHeight), prevout, nTime);
     } else {
         //found in cache
         const CStakeCache& stake = it->second;
+        CBlockIndex* pblockindex = mapBlockIndex[stake.blockFrom.GetHash()];
+
+        if (pblockindex->GetBlockTime() + Params().GetConsensus().nStakeMinAge > nTime)
+            return false;
         if (pBlockTime)
             *pBlockTime = stake.blockFrom.GetBlockTime();
-        return CheckStakeKernelHash(pindexPrev, nBits, new CCoins(stake.txPrev, pindexPrev->nHeight), prevout, nTime);
+        return CheckStakeKernelHash(pindexPrev, nBits, *pblockindex,new CCoins(stake.txPrev, pindexPrev->nHeight), prevout, nTime);
     }
 }
 

@@ -142,7 +142,8 @@ public:
 
         consensus.nStakeTimestampMask = 0xf; // 15
         
-        consensus.nStakeMinAge = 8 * 60 * 60; // 8 hours
+        //consensus.nStakeMinAge = 8 * 60 * 60; // 8 hours
+        consensus.nStakeMinAge = 60; // 1 min
         // The best chain should have at least this much work.
         // consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000006805c7318ce2736c0");
         consensus.nMinimumChainWork = uint256S("0x00");
