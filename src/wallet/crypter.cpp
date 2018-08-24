@@ -163,7 +163,7 @@ bool CCryptoKeyStore::Lock()
         LOCK(cs_KeyStore);
         vMasterKey.clear();
     }
-
+    
     NotifyStatusChanged(this);
     return true;
 }

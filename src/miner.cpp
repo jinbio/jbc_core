@@ -230,7 +230,6 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     CValidationState state;
     
     if (!fProofOfStake &&!TestBlockValidity(state, chainparams, *pblock, pindexPrev, false, false)) {
-        DbgMsg("not stake");
         throw std::runtime_error(strprintf("%s: TestBlockValidity failed: %s", __func__, FormatStateMessage(state)));
     }
     int64_t nTime2 = GetTimeMicros();
@@ -700,15 +699,15 @@ bool SignBlock(CBlock& block, CWallet& wallet, int64_t& nFees)
     CMutableTransaction txCoinBase(*block.vtx[0]);
     CMutableTransaction txCoinStake;
     txCoinStake.nTime = GetAdjustedTime();
+    int64_t time = txCoinStake.nTime;
     txCoinStake.nTime &= ~Params().GetConsensus().nStakeTimestampMask;
-
     int64_t nSearchTime = txCoinStake.nTime; // search to current time
 
-    DbgMsg("sign1");
     if (nSearchTime > nLastCoinStakeSearchTime)
     {
-        // 목표 비트로 n(60) 번 코인을 찾는다.
-        if (wallet.CreateCoinStake(wallet, block.nBits, 60, nFees, txCoinStake, key))
+        // 목표 비트로 n( 1에서 60으로 수정) 번 코인을 찾는다.
+        // int64_t nSearchInterval = nBestHeight+1 > 0 ? 1 : nSearchTime - nLastCoinStakeSearchTime;
+        if (wallet.CreateCoinStake(wallet, block.nBits, 1, nFees, txCoinStake, key))
         {
             if (txCoinStake.nTime >= pindexBestHeader->GetPastTimeLimit()+1)
             {
@@ -753,7 +752,6 @@ void ThreadStakeMiner(CWallet *pwallet, const CChainParams& chainparams)
     int nCount =0;
     while (true)
     {
-        DbgMsg("Staking=========> %d" , nCount);
         while (pwallet->IsLocked())
         {
             nLastCoinStakeSearchInterval = 0;
@@ -782,7 +780,6 @@ void ThreadStakeMiner(CWallet *pwallet, const CChainParams& chainparams)
         // Create new block
         //
         int64_t nFees;//TODO fee 를 설정해야 한다.
-        DbgMsg("START ######## =================== STAKE ==== >");
         std::unique_ptr<CBlockTemplate> pblocktemplate(BlockAssembler(Params()).CreateNewBlock( reservekey.reserveScript,true,true));
         //std::unique_ptr<CBlockTemplate> pblocktemplate(CreateNewBlock(chainparams, reservekey.reserveScript, &nFees, true));
         if (!pblocktemplate.get())
@@ -794,12 +791,10 @@ void ThreadStakeMiner(CWallet *pwallet, const CChainParams& chainparams)
         {
             SetThreadPriority(THREAD_PRIORITY_NORMAL);
             CheckStake(pblock, *pwallet, chainparams);
-            DbgMsg("EDN ######## found =================== STAKE ==== >");
             SetThreadPriority(THREAD_PRIORITY_LOWEST);
             MilliSleep(nMinerSleep );
         }
         else { 
-            DbgMsg("EDN ######## found fail =================== STAKE ==== >");
             MilliSleep(nMinerSleep );
         }
     }

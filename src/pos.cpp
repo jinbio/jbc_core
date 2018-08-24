@@ -16,7 +16,7 @@
 #include "validation.h"
 #include <stdio.h>
 #include "consensus/consensus.h"
-
+#include "wallet/wallet.h"
 
 // Stake Modifier (hash modifier of proof-of-stake):
 // The purpose of stake modifier is to prevent a txout (coin) owner from
@@ -38,7 +38,11 @@ bool CheckCoinStakeTimestamp(int64_t nTimeBlock, int64_t nTimeTx)
 {
     const Consensus::Params& params = Params().GetConsensus();
 
-    return (nTimeBlock == nTimeTx) && ((nTimeTx & params.nStakeTimestampMask) == 0);
+    if(! (nTimeBlock == nTimeTx) && ((nTimeTx & params.nStakeTimestampMask) == 0)){
+        return false;
+    }else{
+        return true;
+    }
 }
 
 // Simplified version of CheckCoinStakeTimestamp() to check header-only timestamp
@@ -66,7 +70,12 @@ bool CheckStakeBlockTimestamp(int64_t nTimeBlock)
 //   quantities so as to generate blocks faster, degrading the system back into
 //   a proof-of-work situation.
 //
-bool CheckStakeKernelHash(const CBlockIndex* pindexPrev, unsigned int nBits,  CBlockIndex& blockFrom, const CCoins* txPrev, const COutPoint& prevout, unsigned int nTimeTx)
+bool CheckStakeKernelHash(const CBlockIndex* pindexPrev, 
+                            unsigned int nBits,  
+                            CBlockIndex& blockFrom, 
+                            const CCoins* txPrev, 
+                            const COutPoint& prevout, 
+                            unsigned int nTimeTx)
 {
     // Weight
     int64_t nValueIn = txPrev->vout[prevout.n].nValue;
@@ -149,51 +158,35 @@ bool VerifySignature(const CTransaction& txFrom, const CTransaction& txTo, unsig
 
     return VerifyScript(txin.scriptSig, txout.scriptPubKey, &txin.scriptWitness, flags, TransactionSignatureChecker(&txTo, nIn, txout.nValue), NULL);
 }
+ 
 
-bool CheckKernel(CBlockIndex* pindexPrev, unsigned int nBits, uint32_t nTimeBlock, const COutPoint& prevout, uint32_t* pBlockTime)
-{
-    std::map<COutPoint, CStakeCache> tmp;
-    return CheckKernel(pindexPrev, nBits, nTimeBlock, prevout, pBlockTime, tmp);
-}
-
-bool CheckKernel(CBlockIndex* pindexPrev, unsigned int nBits, uint32_t nTime, const COutPoint& prevout, uint32_t* pBlockTime, const std::map<COutPoint, CStakeCache>& cache)
+bool CheckKernel(CBlockIndex* pindexPrev, unsigned int nBits, uint32_t nTime, const COutPoint& prevout, uint32_t* pBlockTime)
 {
     uint256 hashProofOfStake, targetProofOfStake;
-    auto it = cache.find(prevout);
-
-    if (it == cache.end()) {
-        CTransactionRef txPrev;
-        uint256 hashBlock = uint256();
-        if (!GetTransaction(prevout.hash, txPrev, Params().GetConsensus(), hashBlock, true)){
-            LogPrintf("CheckKernel : Could not find previous transaction %s\n",prevout.hash.ToString());
-            return false;
-        }
-        
-        if (mapBlockIndex.count(hashBlock) == 0){
-            LogPrintf("CheckKernel : Could not find block of previous transaction %s\n",hashBlock.ToString());
-            return false;
-        }
-
-        CBlockIndex* pblockindex = mapBlockIndex[hashBlock];
-
-        if (pblockindex->GetBlockTime() + Params().GetConsensus().nStakeMinAge > nTime)
-            return false;
-
-        if (pBlockTime)
-             *pBlockTime = pblockindex->GetBlockTime();
-
-        return CheckStakeKernelHash(pindexPrev, nBits,*pblockindex, new CCoins(*txPrev, pindexPrev->nHeight), prevout, nTime);
-    } else {
-        //found in cache
-        const CStakeCache& stake = it->second;
-        CBlockIndex* pblockindex = mapBlockIndex[stake.blockFrom.GetHash()];
-
-        if (pblockindex->GetBlockTime() + Params().GetConsensus().nStakeMinAge > nTime)
-            return false;
-        if (pBlockTime)
-            *pBlockTime = stake.blockFrom.GetBlockTime();
-        return CheckStakeKernelHash(pindexPrev, nBits, *pblockindex,new CCoins(stake.txPrev, pindexPrev->nHeight), prevout, nTime);
+    
+    CTransactionRef txPrev;
+    uint256 hashBlock = uint256();
+    if (!GetTransaction(prevout.hash, txPrev, Params().GetConsensus(), hashBlock, true)){
+        LogPrintf("CheckKernel : Could not find previous transaction %s\n",prevout.hash.ToString());
+        return false;
     }
+    
+    if (mapBlockIndex.count(hashBlock) == 0){
+        LogPrintf("CheckKernel : Could not find block of previous transaction %s\n",hashBlock.ToString());
+        return false;
+    }
+
+    CBlockIndex* pblockindex = mapBlockIndex[hashBlock];
+
+    if (pblockindex->GetBlockTime() + Params().GetConsensus().nStakeMinAge > nTime)
+        return false;
+
+    if (pBlockTime)
+        *pBlockTime = pblockindex->GetBlockTime();
+    if (!pwalletMain->mapWallet.count(prevout.hash))
+        return("CheckProofOfStake(): Couldn't get Tx Index");
+    return CheckStakeKernelHash(pindexPrev, nBits,*pblockindex, new CCoins(*txPrev, pindexPrev->nHeight), prevout, nTime);
+    
 }
 
 void CacheKernel(std::map<COutPoint, CStakeCache>& cache, const COutPoint& prevout)

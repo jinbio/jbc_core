@@ -533,7 +533,7 @@ bool CheckTransaction(const CTransaction& tx, CValidationState &state, bool fChe
     if (tx.IsCoinBase())
     {
         if (tx.vin[0].scriptSig.size() < 2 || tx.vin[0].scriptSig.size() > 100) { 
-            DbgMsg("vin[0] size :%d , isStake:%d" ,tx.vin[0].scriptSig.size() , tx.IsCoinStake());
+            
             return state.DoS(100, false, REJECT_INVALID, "bad-cb-length1");
         }
     }
@@ -1269,20 +1269,32 @@ bool ReadFromDisk(CMutableTransaction& tx, CDiskTxPos& txindex)
 
     return true;
 }
+
+// miner's coin stake reward
+CAmount GetProofOfStakeReward(const CBlockIndex* pindexPrev, int64_t nCoinAge, int64_t nFees)
+{
+    CAmount nSubsidy;
+    
+    //TODO 
+    nSubsidy = nCoinAge * 1 * STAKE_RATE / 365;
+    if (pindexPrev != NULL && (pindexPrev->nMoneySupply + nSubsidy) >= MAX_MONEY) {
+		LogPrintf("Max Money.... no more reward[pow]\n");
+		nSubsidy = 0;
+	}
+    LogPrint("creation", "GetProofOfStakeReward(): create=%s nCoinAge=%d\n", FormatMoney(nSubsidy), nCoinAge);
+
+    return nSubsidy + nFees;
+}
 CAmount GetBlockSubsidy(const CBlockIndex * pindexPrev , const Consensus::Params& consensusParams)
 {
     CAmount nSubsidy  = 0;
-    //DbgMsg("nTime :%ld" , pindexPrev->nTime);
+    
     if(pindexPrev==NULL ) {
         nSubsidy = BLOCK_REWARD_COIN;
-    } else if(pindexPrev->nHeight <BLOCK_HEIGHT_INIT){
+    }else if(pindexPrev->nHeight <BLOCK_HEIGHT_INIT){
         nSubsidy = PREMINE_MONEY_COIN / BLOCK_HEIGHT_INIT; // 
-    }else if(pindexPrev->nHeight <BLOCK_HEIGHT_45){
-        nSubsidy = BLOCK_REWARD_COIN; // 
-    }else if(pindexPrev->nTime <1524544200 ){
-        nSubsidy = BLOCK_REWARD_COIN_45; //
     } else {
-        nSubsidy = BLOCK_REWARD_COIN_40; //
+        nSubsidy = BLOCK_REWARD_COIN; //
     }
     //limit of reward
     if (pindexPrev != NULL && (pindexPrev->nMoneySupply + nSubsidy) >= MAX_MONEY) {
@@ -1513,7 +1525,6 @@ bool CheckTxInputs(const CTransaction& tx, CValidationState& state, const CCoins
         }
         // Check transaction timestamp
         if (coins->nTime > tx.nTime) { 
-            DbgMsg("coin nTime :%d txtime:%d" , coins->nTime, tx.nTime);
             return state.DoS(100, error("CheckInputs() : transaction timestamp earlier than input transaction"),
                         REJECT_INVALID, "bad-txns-time-earlier-than-input");
         }
@@ -2279,11 +2290,11 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
         if (!TransactionGetCoinAge(const_cast<CTransaction&>(*block.vtx[1]), nCoinAge))
             return error("ConnectBlock() : %s unable to get coin age for coinstake", block.vtx[1]->GetHash().ToString());
 
-        int64_t nCalculatedStakeReward = GetProofOfStakeReward( pindex->pprev,nCoinAge, nFees);
+        CAmount blockReward = GetProofOfStakeReward( pindex->pprev,nCoinAge, nFees);
 
-        if (nStakeReward > nCalculatedStakeReward)
-            return state.DoS(100, error("ConnectBlock() : coinstake pays too much(actual=%d vs calculated=%d)", nStakeReward, nCalculatedStakeReward));
-        pindex->nMoneySupply = (pindex->pprev? pindex->pprev->nMoneySupply : 0) + ( nStakeReward<0?0:nStakeReward -nFees)  ;            
+        if (nStakeReward > blockReward)
+            return state.DoS(100, error("ConnectBlock() : coinstake pays too much(actual=%d vs calculated=%d)", nStakeReward, blockReward));
+        pindex->nMoneySupply = (pindex->pprev? pindex->pprev->nMoneySupply : 0) + ( nStakeReward<0?0:blockReward -nFees)  ;            
     }
     if (!control.Wait()){}
         // return state.DoS(100, false);
@@ -3300,7 +3311,6 @@ bool CheckBlock(const CBlock& block, CValidationState& state, const Consensus::P
     // redundant with the call in AcceptBlockHeader.
     if(block.IsProofOfWork()){ 
         if (!CheckBlockHeader(block, state, consensusParams,  fCheckPOW)) { 
-            DbgMsg("check fail!!!");
             return false;
         }
     }
@@ -4864,6 +4874,11 @@ public:
 
 
 
+uint64_t GetCoinAgeByTime(int64_t timespan, int64_t nValue  ){
+    arith_uint256 bnCentSecond = arith_uint256(nValue) * (timespan) / CENT;
+    arith_uint256 bnCoinDay = bnCentSecond * CENT / COIN / (24 * 60 * 60);
+    return bnCoinDay.GetLow64();
+}
 // ppcoin: total coin age spent in transaction, in the unit of coin-days.
 // Only those coins meeting minimum age requirement counts. As those
 // transactions not in main chain are not currently indexed so we
@@ -4871,7 +4886,7 @@ public:
 // guaranteed to be in main chain by sync-checkpoint. This rule is
 // introduced to help nodes establish a consistent view of the coin
 // age (trust score) of competing branches.
-bool GetCoinAge(const CTransaction& tx, CBlockTreeDB& txdb, const CBlockIndex* pindexPrev, uint64_t& nCoinAge)
+bool GetCoinAge(const CTransaction& tx,  uint64_t& nCoinAge)
 {
 	arith_uint256 bnCentSecond = 0;  // coin age in the unit of cent-seconds
     nCoinAge = 0;
@@ -4882,7 +4897,7 @@ bool GetCoinAge(const CTransaction& tx, CBlockTreeDB& txdb, const CBlockIndex* p
     BOOST_FOREACH(const CTxIn& txin, tx.vin)
     {
         // First try finding the previous transaction in database
-        DbgMsg("Stake proposal %s" , txin.ToString());
+        
         CDiskTxPos txindex;
         CMutableTransaction txPrevMu;
         if (!ReadFromDisk(txPrevMu, txindex, *pblocktree, txin.prevout))

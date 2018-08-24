@@ -2791,7 +2791,7 @@ bool CWallet::CreateTransaction(const vector<CRecipient>& vecSend, CWalletTx& wt
         if (GetTransactionWeight(wtxNew) >= MAX_STANDARD_TX_WEIGHT)
         {
             strFailReason = _("Transaction too large");
-            DbgMsg("Transaction too large cur: %d , max: %d ",GetTransactionWeight(wtxNew) , MAX_STANDARD_TX_WEIGHT);
+            
             return false;
         }
     }
@@ -4080,18 +4080,6 @@ void CWallet::AvailableCoinsForStaking(std::vector<COutput>& vCoins) const
                                             ((mine & ISMINE_SPENDABLE) != ISMINE_NO) ||
                                             (mine & ISMINE_WATCH_SOLVABLE) != ISMINE_NO,
                                             (mine & (ISMINE_SPENDABLE | ISMINE_WATCH_SOLVABLE)) != ISMINE_NO));
-                    DbgMsg("Spenable....");
-                }else { 
-                     DbgMsg("spent %d isLocked %d value %d isMine %d " , IsSpent(wtxid, i),
-                        IsLockedCoin((*it).first, i),
-                        pcoin->tx->vout[i].nValue,
-                        mine );
-                    if (!(IsSpent(wtxid, i)) && 
-                    !IsLockedCoin((*it).first, i) && (pcoin->tx->vout[i].nValue > 0)) { 
-                        DbgMsg("stop");
-                        isminetype mine1 = IsMine(pcoin->tx->vout[i]);
-                    }
-                   
                 }
             }
         }
@@ -4118,10 +4106,8 @@ bool CWallet::SelectCoinsForStaking(CAmount& nTargetValue,   std::set<std::pair<
 
         int64_t n = pcoin->tx->vout[i].nValue;
         if(n < 1 *COIN){
-            DbgMsg("too small ammount %d" , n);
             continue;
         }
-        DbgMsg( "nTime %d" , pcoin->GetTxTime() );
         int64_t current = GetTime();
         // skip early tx.
         if( pcoin->GetTxTime() + Params().GetConsensus().nStakeMinAge >current ){ 
@@ -4131,9 +4117,15 @@ bool CWallet::SelectCoinsForStaking(CAmount& nTargetValue,   std::set<std::pair<
                 n / COIN);
             continue;
         }
+        // check coin age
+        int64_t timespan = current - pcoin->GetTxTime();
+        int64_t coinAge  = GetCoinAgeByTime(timespan, n);
+        if( coinAge<=0){
+            continue;
+        }
 
         pair<int64_t,pair<const CWalletTx*,unsigned int> > coin = make_pair(n,make_pair(pcoin, i));
-
+        
         if (n >= nTargetValue)
         {
             // If input value is greater or equal to target then simply insert
@@ -4187,18 +4179,6 @@ uint64_t CWallet::GetStakeWeight() const
     return nWeight;
 }
 
-// miner's coin stake reward
-int64_t GetProofOfStakeReward(const CBlockIndex* pindexPrev, int64_t nCoinAge, int64_t nFees)
-{
-    int64_t nSubsidy;
-    
-    //TODO 
-    nSubsidy = nCoinAge * 1 * CENT * 33 / (365 * 33 + 8);
-
-    LogPrint("creation", "GetProofOfStakeReward(): create=%s nCoinAge=%d\n", FormatMoney(nSubsidy), nCoinAge);
-
-    return nSubsidy + nFees;
-}
 
 bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int64_t nSearchInterval, CAmount& nFees, CMutableTransaction& tx, CKey& key)
 {
@@ -4238,21 +4218,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
     if (setCoins.empty())
     	return false;
 
-    static std::map<COutPoint, CStakeCache> stakeCache;
-    if(stakeCache.size() > setCoins.size() + 100){
-		//Determining if the cache is still valid is harder than just clearing it when it gets too big, so instead just clear it
-		//when it has more than 100 entries more than the actual setCoins.
-		stakeCache.clear();
-    }
-    if(GetBoolArg("-stakecache", DEFAULT_STAKE_CACHE)) {
-    	BOOST_FOREACH(const PAIRTYPE(const CWalletTx*, unsigned int)& pcoin, setCoins)
-    	{
-    		boost::this_thread::interruption_point();
-    		COutPoint prevoutStake = COutPoint(pcoin.first->GetHash(), pcoin.second);
-    		CacheKernel(stakeCache, prevoutStake); //this will do a 2 disk loads per op
-    	}
-
-    }
+     
 
     int64_t nCredit = 0;
     CScript scriptPubKeyKernel;
@@ -4261,7 +4227,6 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
     // enum wallet tx..
     BOOST_FOREACH(const PAIRTYPE(const CWalletTx*, unsigned int)& pcoin, setCoins)
     {
-        DbgMsg("make stake #1 %d" ,idx1++ );
         static int nMaxStakeSearchInterval = 60;
         bool fKernelFound = false;
         // find wallet tx nounce
@@ -4273,7 +4238,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
             COutPoint prevoutStake = COutPoint(pcoin.first->GetHash(), pcoin.second);
             uint32_t nBlockTime;
             //LogPrintf("looking for coinstake \n");
-            if (CheckKernel(pindexPrev, nBits, txNew.nTime - n, prevoutStake, &nBlockTime, stakeCache))
+            if (CheckKernel(pindexPrev, nBits, txNew.nTime - n, prevoutStake, &nBlockTime))
             {
                 // Found a kernel
                 LogPrintf("CreateCoinStake : kernel found\n");
@@ -4328,9 +4293,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
                 LogPrint("coinstake", "CreateCoinStake : added kernel type=%d\n", whichType);
                 fKernelFound = true;
                 break;
-            }else{
-                DbgMsg("check kernel fail...");
-            }
+            } 
         }
 
         if (fKernelFound)
@@ -4365,12 +4328,10 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
     // Calculate coin age reward
     {
         uint64_t nCoinAge;
-        if (!GetCoinAge(txNew, *pblocktree, pindexPrev, nCoinAge))
-            return error("CreateCoinStake : failed to calculate coin age");
-
+        if (!GetCoinAge(txNew,   nCoinAge))
+            return error("CreateCoinStake : failed to calculate coin age");       
         int64_t nReward = GetProofOfStakeReward(pindexPrev, nCoinAge, nFees);
         if (nReward <= 0){
-            DbgMsg("Skip Reward 0");
             return false;
         }
 

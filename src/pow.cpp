@@ -29,10 +29,6 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
     
     if (pblock->GetBlockTime() > pindexLast->GetBlockTime() + params.nPowTargetSpacing*5){//1min *5 no block, will reset difficulty
         if(fDebug){ 
-            DbgMsg("targetspace :%d curTime:%d prevTime:%d " , 
-                params.nPowTargetSpacing ,
-                pblock->GetBlockTime() ,
-                pindexLast->GetBlockTime() );
             LogPrint("mine", "%d height too old net... gap:%s sec, new:%08x , prev:%08x \n" ,
                 pindexLast->nHeight,
                 pblock->GetBlockTime() - pindexLast->GetBlockTime() , 
