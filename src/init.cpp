@@ -1664,7 +1664,8 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
         return InitError(strNodeError);
 #ifdef ENABLE_WALLET
     // Mine proof-of-stake blocks in the background
-    if (!GetBoolArg("-staking", true))
+    
+    if (!GetBoolArg("-staking", !GetBoolArg("-server", false)))
         LogPrintf("Staking disabled\n");
     else if (pwalletMain) { 
         LogPrintf("Staking enabled.\n");

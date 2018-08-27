@@ -1316,8 +1316,8 @@ void BitcoinGUI::updateWeight()
         return;
 
 #ifdef ENABLE_WALLET
-    if (pwalletMain)
-    nWeight = pwalletMain->GetStakeWeight();
+    if (pwalletMain &&!GetBoolArg("-staking", !GetBoolArg("-server", false)))
+        nWeight = pwalletMain->GetStakeWeight();
 #endif
 }
 

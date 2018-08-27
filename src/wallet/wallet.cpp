@@ -47,8 +47,15 @@ bool fWalletRbf = DEFAULT_WALLET_RBF;
 const char * DEFAULT_WALLET_DAT = "wallet.dat";
 const uint32_t BIP32_HARDENED_KEY_LIMIT = 0x80000000;
 
-
-static int64_t GetStakeCombineThreshold() { return 500 * COIN; }
+/**
+ * min split tx 
+ * 50만 이상의 tx 는 stake시 추가로 넣지 않는다.
+ * 
+ */
+static int64_t GetStakeCombineThreshold() { return 500000 * COIN; }
+/**
+ *  100만 이하의 입력은 나누지 않는다.
+ */
 static int64_t GetStakeSplitThreshold() { return 2 * GetStakeCombineThreshold(); }
 /**
  * Fees smaller than this (in satoshi) are considered zero fee (for transaction creation)
