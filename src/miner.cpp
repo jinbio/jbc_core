@@ -49,7 +49,7 @@ uint64_t nLastBlockSize = 0;
 uint64_t nLastBlockWeight = 0;
 int64_t nLastCoinStakeSearchInterval = 0;
 
-unsigned int nMinerSleep = 5000;
+unsigned int nMinerSleep = 1000;//5초
 static bool ProcessBlockFound(const CBlock* pblock, const CChainParams& chainparams, const uint256& hash);
 class ScoreCompare
 {
@@ -765,12 +765,13 @@ void ThreadStakeMiner(CWallet *pwallet, const CChainParams& chainparams)
 
         if (fTryToSync){
             fTryToSync = false;
+            //연결수가 3보가 작거나, 동기화 시간이 10 분을 넘었으면 1분간 쉰다.
             if (g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL)  < 3 || pindexBestHeader->GetBlockTime() < GetTime() - 10 * 60){
                 MilliSleep(60000);
                 continue;
             }
         }
-        if(pwallet->HaveAvailableCoinsForStaking()) {
+        if(!pwallet->HaveAvailableCoinsForStaking()) {
             MilliSleep(nMinerSleep);
             continue;
         }

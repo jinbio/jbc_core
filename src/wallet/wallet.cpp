@@ -4213,7 +4213,6 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
     CAmount nBalance = GetBalance();
     
     if (nBalance <= nReserveBalance) { 
-        DbgMsg("지갑에 자금이 없으므로 실패....%d %d "  , nBalance , nReserveBalance);
     	return false;
     }
 

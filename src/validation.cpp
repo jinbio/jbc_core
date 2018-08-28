@@ -3752,7 +3752,6 @@ bool ProcessNewBlock(const CChainParams& chainparams, const std::shared_ptr<cons
         // belt-and-suspenders.
         bool ret = CheckBlock(*pblock, state, chainparams.GetConsensus());
         if( !ret ){
-            DbgMsg("CheckBlock Fail....");
             return error("%s: CheckBlock FAILED ", __func__);
         }
         LOCK(cs_main);
@@ -4923,7 +4922,7 @@ bool GetCoinAge(const CTransaction& tx,  uint64_t& nCoinAge)
                 Params().GetConsensus().nStakeMinAge , 
                 tx.nTime ,
                ( block.GetBlockTime() + Params().GetConsensus().nStakeMinAge) - tx.nTime);
-            DbgMsg("block %s" , block.ToString());
+             
             continue; // only count coins meeting min age requirement
         }
 
