@@ -202,6 +202,7 @@ public:
     //! Change to 64-bit type when necessary; won't happen before 2030
     unsigned int nChainTx;
     int64_t nMoneySupply;
+    COutPoint prevoutStake;
     //! Verification status of this block. See enum BlockStatus
     unsigned int nStatus;
     uint256 nStakeModifier;
@@ -232,6 +233,7 @@ public:
         nChainTx = 0;
         nStatus = 0;
         nStakeModifier = uint256();
+        prevoutStake.SetNull();
         nSequenceId = 0;
         nTimeMax = 0;
 
@@ -420,6 +422,7 @@ public:
         READWRITE(VARINT(nHeight));
         READWRITE(VARINT(nStatus));
         READWRITE(nStakeModifier);
+        READWRITE(prevoutStake);
         READWRITE(VARINT(nTx));
         if (nStatus & (BLOCK_HAVE_DATA | BLOCK_HAVE_UNDO))
             READWRITE(VARINT(nFile));

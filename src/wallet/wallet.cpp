@@ -4151,6 +4151,13 @@ bool CWallet::SelectCoinsForStaking(CAmount& nTargetValue,   std::set<std::pair<
     return true;
 }
 
+bool CWallet::HaveAvailableCoinsForStaking() const
+{
+    std::vector<COutput> vCoins;
+    AvailableCoinsForStaking(vCoins);
+    return vCoins.size() > 0;
+}
+
 uint64_t CWallet::GetStakeWeight() const
 {
     // Choose coins to use

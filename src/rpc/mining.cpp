@@ -130,14 +130,29 @@ UniValue generateBlocks(boost::shared_ptr<CReserveScript> coinbaseScript, int nG
             IncrementExtraNonce(pblock, chainActive.Tip(), nExtraNonce);
         }
         DbgMsg("=-============================== > ");
+        bool isFail = false;
         while (nMaxTries > 0 && pblock->nNonce < nInnerLoopCount && !CheckProofOfWork(pblock->GetPoWHash(), pblock->nBits, Params().GetConsensus())) {
             if(nMaxTries%10000==0){
                 DbgMsg("Search %u \n%s" ,nMaxTries,pblock->ToString() );
             }
+            CBlockIndex* pindexPrev = chainActive.Tip();
+            if(pindexPrev->GetBlockHash()!= pblock->hashPrevBlock){
+                DbgMsg("Best chain is changed...");
+                isFail =true;
+                break;
+            }
+            uint32_t nBit        = GetNextWorkRequired( pindexPrev, pblock, false,Params().GetConsensus());
+            if(nBit != pblock->nBits){
+                isFail =true;
+                DbgMsg("Chained nBIT======================> ");
+                break;
+            }
             ++pblock->nNonce;
             --nMaxTries;
         }
-        DbgMsg("found pow block %s" , pblock->GetPoWHash().ToString());
+        if(isFail){
+            continue;
+        }
         if (nMaxTries == 0) {
             break;
         }
@@ -481,7 +496,7 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
 
     if(!g_connman)
         throw JSONRPCError(RPC_CLIENT_P2P_DISABLED, "Error: Peer-to-peer functionality missing or disabled");
-
+    
     if (g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL) == 0)
         throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED, "JBCoin is not connected!");
 

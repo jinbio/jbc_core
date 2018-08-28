@@ -221,8 +221,9 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     pblock->hashPrevBlock  = pindexPrev->GetBlockHash();
     
     // why?
-    if(!fProofOfStake)
+    if(!fProofOfStake){ 
         UpdateTime(pblock, chainparams.GetConsensus(), pindexPrev);
+    }
     pblock->nBits          = GetNextWorkRequired(pindexPrev, pblock, fProofOfStake,chainparams.GetConsensus());
     pblock->nNonce         = 0;
     pblocktemplate->vTxSigOpsCost[0] = WITNESS_SCALE_FACTOR * GetLegacySigOpCount(*pblock->vtx[0]);
@@ -724,7 +725,6 @@ bool SignBlock(CBlock& block, CWallet& wallet, int64_t& nFees)
                 block.vtx.insert(block.vtx.begin() + 1, MakeTransactionRef(txCoinStake));
 
                 block.hashMerkleRoot = BlockMerkleRoot(block);
-
                 // append a signature to our block
                 return key.Sign(block.GetHash(), block.vchBlockSig);
             }
@@ -748,38 +748,36 @@ void ThreadStakeMiner(CWallet *pwallet, const CChainParams& chainparams)
     CReserveKey reservekey(pwallet);
 
     bool fTryToSync = true;
-    bool testStake =true;
+    
     int nCount =0;
-    while (true)
-    {
-        while (pwallet->IsLocked())
-        {
+    while (true){
+        while (pwallet->IsLocked()){
             nLastCoinStakeSearchInterval = 0;
             MilliSleep(1000);
         }
 
-        if(!testStake) { 
-            while (g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL) < 1 || IsInitialBlockDownload())
-            {
-                nLastCoinStakeSearchInterval = 0;
-                fTryToSync = true;
-                MilliSleep(1000);
-            }
+        
+        while (g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL) < 1 || IsInitialBlockDownload()){
+            nLastCoinStakeSearchInterval = 0;
+            fTryToSync = true;
+            MilliSleep(1000);
+        }
 
-            if (fTryToSync)
-            {
-                fTryToSync = false;
-                if (g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL)  < 3 || pindexBestHeader->GetBlockTime() < GetTime() - 10 * 60)
-                {
-                    MilliSleep(60000);
-                    continue;
-                }
+        if (fTryToSync){
+            fTryToSync = false;
+            if (g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL)  < 3 || pindexBestHeader->GetBlockTime() < GetTime() - 10 * 60){
+                MilliSleep(60000);
+                continue;
             }
+        }
+        if(pwallet->HaveAvailableCoinsForStaking()) {
+            MilliSleep(nMinerSleep);
+            continue;
         }
         //
         // Create new block
         //
-        int64_t nFees;//TODO fee 를 설정해야 한다.
+        int64_t nFees;
         std::unique_ptr<CBlockTemplate> pblocktemplate(BlockAssembler(Params()).CreateNewBlock( reservekey.reserveScript,true,true));
         //std::unique_ptr<CBlockTemplate> pblocktemplate(CreateNewBlock(chainparams, reservekey.reserveScript, &nFees, true));
         if (!pblocktemplate.get())
@@ -790,6 +788,11 @@ void ThreadStakeMiner(CWallet *pwallet, const CChainParams& chainparams)
         if (SignBlock(*pblock, *pwallet, nFees))
         {
             SetThreadPriority(THREAD_PRIORITY_NORMAL);
+            if (chainActive.Tip()->GetBlockHash() != pblock->hashPrevBlock) {
+                //another block was received while building ours, scrap progress
+                LogPrintf("ThreadStakeMiner(): Valid future PoS block was orphaned before becoming valid");
+                continue;
+            }
             CheckStake(pblock, *pwallet, chainparams);
             SetThreadPriority(THREAD_PRIORITY_LOWEST);
             MilliSleep(nMinerSleep );

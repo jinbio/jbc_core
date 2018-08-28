@@ -1973,6 +1973,9 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     if (block.IsProofOfStake())
     {
         pindex->SetProofOfStake();
+        pindex->prevoutStake = block.vtx[1]->vin[0].prevout;
+    }else{
+        pindex->prevoutStake.SetNull();
     }
     
     // Check it again in case a previous version let a bad block in
@@ -3293,9 +3296,11 @@ bool CheckBlockHeader(const CBlockHeader& block, CValidationState& state, const 
     // Check proof of work matches claimed amount
     CBlockIndex pblock = CBlockIndex(block);
     
-    if (pblock.IsProofOfWork())
-        if (fCheckPOW && !CheckProofOfWork(block.GetPoWHash(), block.nBits, consensusParams))
+    if (pblock.IsProofOfWork()){
+        if (fCheckPOW && !CheckProofOfWork(block.GetPoWHash(), block.nBits, consensusParams)){
             return state.DoS(50, false, REJECT_INVALID, "high-hash", false, "proof of work failed");
+        }
+    }
 
     return true;
 }
