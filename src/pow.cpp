@@ -14,6 +14,9 @@
 
 unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock, bool fProofOfStake, const Consensus::Params& params)
 {
+    if(fProofOfStake){
+        return UintToArith256(params.posLimit).GetCompact();
+    };
     unsigned int nProofOfWorkLimit = UintToArith256(params.powLimit).GetCompact();
 
     // Genesis block
@@ -21,22 +24,19 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         //LogPrint("mine", "init Limit %d ,%d\n" ,pindexLast->nHeight ,BLOCK_HEIGHT_INIT);
         return nProofOfWorkLimit;
     }
-    
-    const CBlockIndex* pindexPrev = GetLastBlockIndex(pindexLast, fProofOfStake);
+
+    const CBlockIndex* pindexPrev = GetLastBlockIndex(pindexLast, false);
     if(pindexPrev==NULL||pindexPrev->pprev==NULL){
         return nProofOfWorkLimit;
     }
-    
+
     if (pblock->GetBlockTime() > pindexLast->GetBlockTime() + params.nPowTargetSpacing*5){//1min *5 no block, will reset difficulty
         
         return nProofOfWorkLimit;
     }
     //too fast
-    if (pblock->GetBlockTime() <  ( pindexLast->GetBlockTime() +  params.nPowTargetSpacing/3)&& pindexLast->nHeight >10000){
-        unsigned int ret =pindexLast->nBits / 2;
-        if(fDebug)
-            LogPrint("mine", "prevhieght:%d too fast block  new target:%08x normal:%08x\n ",pindexLast->nHeight, ret ,pindexLast->nBits );
-        return ret;
+    if (pblock->GetBlockTime() <  ( pindexLast->GetBlockTime() +  params.nPowTargetSpacing/3)){
+        return pindexLast->nBits / 2;
     }
     
 
@@ -44,21 +44,12 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
     // JBCoin: This fixes an issue where a 51% attack can change difficulty at will.
     // Go back the full period unless it's the first retarget after genesis. Code courtesy of Art Forz
     //
-    int blockstogoback = params.DifficultyAdjustmentInterval()-1;
-    if ((pindexLast->nHeight+1) != params.DifficultyAdjustmentInterval()) // nPowTargetTimespan / nPowTargetSpacing;
-        blockstogoback = params.DifficultyAdjustmentInterval(); 
-
-    // Go back by what we want to be 1 days worth of blocks
-    const CBlockIndex* pindexFirst = pindexLast;
     
-    for (int i = 0; pindexFirst && i < blockstogoback; i++){ 
-        if(pindexFirst->nHeight<=1)//root
-            break;
-        pindexFirst = pindexFirst->pprev;
-    }
-    
+    int nHeightFirst = pindexLast->nHeight - (params.DifficultyAdjustmentInterval()-1);
+    assert(nHeightFirst >= 0);
+    const CBlockIndex* pindexFirst = pindexLast->GetAncestor(nHeightFirst);
     assert(pindexFirst);
-
+ 
     return CalculateNextWorkRequired(pindexLast, pindexFirst->GetBlockTime(), params,fProofOfStake);
 }
 
@@ -79,11 +70,6 @@ static arith_uint256 GetTargetLimit(int64_t nTime, bool fProofOfStake, const Con
 **/
 unsigned int CalculateNextWorkRequired(const CBlockIndex* pindexLast, int64_t nFirstBlockTime, const Consensus::Params& params,bool fProofOfStake)
 {
-    // 난이도조절을 하지 않게 했다면...
-    if (params.fPowNoRetargeting){//fPowNoRetargeting = false
-        LogPrint("mine", "noRetargeting\n");
-        return pindexLast->nBits;
-    }
     
     // Limit adjustment step , 진짜로 이용된 시간.
     int64_t nActualTimespan = pindexLast->GetBlockTime() - nFirstBlockTime;//1 day time span 

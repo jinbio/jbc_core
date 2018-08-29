@@ -81,8 +81,11 @@ bool CheckStakeKernelHash(const CBlockIndex* pindexPrev,
     int64_t nValueIn = txPrev->vout[prevout.n].nValue;
     if (nValueIn == 0)
         return false;
-    if (blockFrom.GetBlockTime() + Params().GetConsensus().nStakeMinAge > nTimeTx) // Min age requirement
+    if (blockFrom.GetBlockTime() + Params().GetConsensus().nStakeMinAge > nTimeTx){ // Min age requirement
+        DbgMsg("too early? %d %d %d gap:%d" , blockFrom.GetBlockTime() ,Params().GetConsensus().nStakeMinAge ,nTimeTx,
+                blockFrom.GetBlockTime() + Params().GetConsensus().nStakeMinAge - nTimeTx);
         return error("CheckStakeKernelHash() : min age violation");
+    }
     // Base target
     arith_uint256 bnTarget;
     bnTarget.SetCompact(nBits);
