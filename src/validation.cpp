@@ -3262,8 +3262,7 @@ static bool CheckBlockSignature(const CBlock& block)//, const uint256& hash)
     {
         vector<unsigned char>& vchPubKey = vSolutions[0];
         return CPubKey(vchPubKey).Verify(block.GetHash(), block.vchBlockSig);
-        return true;
-        //return CPubKey(vchPubKey).Verify(hash, block.vchBlockSig);
+      
     }
     else
     {
@@ -3281,6 +3280,7 @@ static bool CheckBlockSignature(const CBlock& block)//, const uint256& hash)
             return false;
         if (!script.GetOp(pc, opcode, vchPushValue))
             return false;
+        // TODO check...
         // if (!IsCompressedOrUncompressedPubKey(vchPushValue))
         //     return false;
         return true;
