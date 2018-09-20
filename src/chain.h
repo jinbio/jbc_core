@@ -209,6 +209,7 @@ public:
     //! block header
     int nVersion;
     uint256 hashMerkleRoot;
+    unsigned int nStakeTime;
     unsigned int nTime;
     unsigned int nBits;
     unsigned int nNonce;
@@ -251,10 +252,20 @@ public:
         SetNull();
     }
 
-    CBlockIndex(const CBlockHeader& block)
+    CBlockIndex(const CBlock& block)
     {
+        
         SetNull();
 
+        if (block.IsProofOfStake())
+        {
+            SetProofOfStake();
+            prevoutStake = block.vtx[1]->vin[0].prevout;
+        }
+        else
+        {
+            prevoutStake.SetNull();
+        }
         nVersion = block.nVersion;
         hashMerkleRoot = block.hashMerkleRoot;
         nTime = block.nTime;

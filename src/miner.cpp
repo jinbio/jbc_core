@@ -134,7 +134,7 @@ void BlockAssembler::resetBlock()
     blockFinished = false;
 }
 
-std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& scriptPubKeyIn, bool fMineWitnessTx,bool fProofOfStake)
+std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& scriptPubKeyIn, bool fMineWitnessTx,bool fProofOfStake ,CAmount* pFees)
 {
     int64_t nTimeStart = GetTimeMicros();
 
@@ -193,7 +193,8 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     coinbaseTx.vin.resize(1);
     coinbaseTx.vin[0].prevout.SetNull();
     coinbaseTx.vout.resize(1);
-
+    if (pFees)
+        *pFees = nFees;
     if(fProofOfStake)
     {
         coinbaseTx.vout[0].scriptPubKey.clear();
@@ -781,7 +782,7 @@ void ThreadStakeMiner(CWallet *pwallet, const CChainParams& chainparams)
         // Create new block
         //
         int64_t nFees;
-        std::unique_ptr<CBlockTemplate> pblocktemplate(BlockAssembler(Params()).CreateNewBlock( reservekey.reserveScript,true,true));
+        std::unique_ptr<CBlockTemplate> pblocktemplate(BlockAssembler(Params()).CreateNewBlock( reservekey.reserveScript,true,true, &nFees));
         //std::unique_ptr<CBlockTemplate> pblocktemplate(CreateNewBlock(chainparams, reservekey.reserveScript, &nFees, true));
         if (!pblocktemplate.get())
              return;

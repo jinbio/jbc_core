@@ -3377,19 +3377,15 @@ bool CheckBlock(const CBlock& block, CValidationState& state, const Consensus::P
             return state.DoS(100, error("CheckBlock(): bad proof-of-stake block signature"),
             		REJECT_INVALID, "bad-block-signature");
     // Check transactions
-    int idx =0;
     for (const auto& tx : block.vtx) { 
-        
         if (!CheckTransaction(*tx, state, false)) {
             return state.Invalid(false, state.GetRejectCode(), state.GetRejectReason(),
                                  strprintf("Transaction check failed (tx hash %s) %s", tx->GetHash().ToString(), state.GetDebugMessage()));
         }
-        idx++;
     }
 
     unsigned int nSigOps = 0;
-    for (const auto& tx : block.vtx)
-    {
+    for (const auto& tx : block.vtx)    {
         nSigOps += GetLegacySigOpCount(*tx);
     }
     if (nSigOps * WITNESS_SCALE_FACTOR > MAX_BLOCK_SIGOPS_COST)
