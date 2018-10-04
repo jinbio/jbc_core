@@ -3372,13 +3372,13 @@ bool CheckBlock(const CBlock& block, CValidationState& state, const Consensus::P
                 return state.DoS(100, error("CheckBlock(): more than one coinstake"),
                                     REJECT_INVALID, "bad-cs-multiple");
     }
-    // Check proof-of-stake block signature
+    // Check proof-of-online block signature
     if (fCheckSig && !CheckBlockSignature(block ))
-            return state.DoS(100, error("CheckBlock(): bad proof-of-stake block signature"),
+            return state.DoS(100, error("CheckBlock(): bad proof-of-online block signature"),
             		REJECT_INVALID, "bad-block-signature");
     // Check transactions
     for (const auto& tx : block.vtx) { 
-        if (!CheckTransaction(*tx, state, false)) {
+        if (!CheckTransaction(*tx, state, true)) {
             return state.Invalid(false, state.GetRejectCode(), state.GetRejectReason(),
                                  strprintf("Transaction check failed (tx hash %s) %s", tx->GetHash().ToString(), state.GetDebugMessage()));
         }
